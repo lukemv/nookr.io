@@ -1,0 +1,13 @@
+---
+environments:
+  nookr:
+    account_id: 238164213705
+    vars:
+      hosted_zone_id: Z2QWTUDU3AAFZF
+      hosted_zone_name: nookr.io
+    tags:
+      Environment: "{environment}"
+
+bespin:
+  extra_files:
+  - network/bespin.yml

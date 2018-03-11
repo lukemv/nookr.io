@@ -1,0 +1,29 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: VPC - Flow Logs
+
+Parameters:
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Description: The VPC ID for which you want to create a flow log.
+
+  VpcFlowLogsLogGroupName:
+    Type: String
+    AllowedPattern: '[A-Za-z][A-Za-z0-9-]{0,127}'
+
+  RoleVpcFlowLogsArn:
+    Type: String
+
+Resources:
+  VpcFlowLog:
+    Type: "AWS::EC2::FlowLog"
+    Properties:
+      DeliverLogsPermissionArn: !Ref RoleVpcFlowLogsArn
+      LogGroupName: !Ref VpcFlowLogsLogGroupName
+      ResourceId: !Ref VpcId
+      ResourceType: "VPC"
+      TrafficType: "ALL"
+
+Outputs:
+  VpcFlowLogs:
+    Value: !Ref VpcFlowLogs

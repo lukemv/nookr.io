@@ -10,7 +10,12 @@ const port = (env == 'prod' ||  env == 'uat' || env == 'docker') ? 80 : 8080;
 const app = express();
 
 app.get('/', (req, res) => {
-  const v = payload('infoMessage', {message: "Hello World"});
+  const v = payload('infoMessage', {message: "Hello Paul"});
+  res.send(v);
+});
+
+app.get('/foo', (req, res) => {
+  const v = payload('infoMessage', {message: "Hello Paul"});
   res.send(v);
 });
 

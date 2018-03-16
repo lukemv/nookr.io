@@ -1,10 +1,10 @@
 {
-  "name": "app",
-  "version": "1.0.0",
-  "description": "",
+  "name": "nookr.io",
+  "version": "0.0.1",
+  "description": "nookr.io",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node_modules/.bin/nodemon --watch ./ app.js"
+    "dev": "node_modules/.bin/nodemon --watch /srv app.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,0 +1,15 @@
+{
+  "name": "nookr.io.docs",
+  "version": "1.0.0",
+  "description": "Documentation for nookr.io code base",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/harp server -i 0.0.0.0 -p 9000 src/",
+    "clean": "rm -rf node_modules && npm install"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "harp": "^0.25.0"
+  }
+}

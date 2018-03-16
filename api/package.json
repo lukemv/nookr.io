@@ -4,7 +4,8 @@
   "description": "nookr.io",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node_modules/.bin/nodemon --watch /srv app.js"
+    "dev": "node_modules/.bin/nodemon --watch /srv app.js",
+    "renew": "rm -rf node_modules && npm install && node_modules/.bin/nodemon --watch /srv app.js"
   },
   "author": "",
   "license": "ISC",

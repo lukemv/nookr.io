@@ -1,0 +1,30 @@
+{
+    "family": "nookr",
+    "taskRoleArn": "",
+    "networkMode": "bridge",
+    "containerDefinitions": [
+        {
+            "name": "nookr-ui",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-ui",
+            "cpu": 10,
+            "memory": 50,
+            "memoryReservation": 50,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 8081,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "hostname": "ui",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-group": "nookr-ui"
+                }
+            }
+        }
+    ]
+ }

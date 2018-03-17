@@ -6,4 +6,4 @@ node_js:
 - 9.2
 script:
 - ./nookr_build.sh
-- ./nookr_publish.sh
+- ./nookr_push.sh

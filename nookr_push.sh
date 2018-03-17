@@ -1,9 +1,6 @@
 #!/bin/bash
 repo="238164213705.dkr.ecr.ap-southeast-2.amazonaws.com"
 
-echo "[INFO] Authenticating with AWS"
-eval $(aws ecr get-login --no-include-email --region ap-southeast-2 | sed 's|https://||')
-
 echo "[INFO] Tagging UI"
 docker tag "nookr-ui:latest" "$repo/nookr-ui:latest"
 

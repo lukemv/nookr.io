@@ -1,17 +1,10 @@
 #!/bin/bash
-repo="238164213705.dkr.ecr.ap-southeast-2.amazonaws.com"
+REPO="238164213705.dkr.ecr.ap-southeast-2.amazonaws.com"
 
-echo "[INFO] Tagging UI"
-docker tag "nookr-ui:latest" "$repo/nookr-ui:latest"
-
-echo "[INFO] Tagging Website"
-docker tag "nookr-docs:latest" "$repo/nookr-docs:latest"
-
-echo "[INFO] Tagging Proxy"
-docker tag "nookr-proxy:latest" "$repo/nookr-proxy:latest"
-
-echo "[INFO] Tagging API"
-docker tag "nookr-api:latest" "$repo/nookr-api:latest"
+docker tag "nookr-ui:latest" "$REPO/nookr-ui:latest"
+docker tag "nookr-docs:latest" "$REPO/nookr-docs:latest"
+docker tag "nookr-proxy:latest" "$REPO/nookr-proxy:latest"
+docker tag "nookr-api:latest" "$REPO/nookr-api:latest"
 
 echo "[INFO] Pushing UI"
 docker push "$repo/nookr-ui:latest"

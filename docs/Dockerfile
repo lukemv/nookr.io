@@ -1,3 +1,5 @@
 FROM nginx
 
-COPY ./dist /usr/share/nginx/html
+COPY ./dist /srv
+COPY ./nginx/conf.d /etc/nginx/conf.d
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf

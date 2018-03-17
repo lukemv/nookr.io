@@ -25,6 +25,8 @@ if [ "$env" != "local" ]; then
 
   echo "[INFO] Building UI"
   pushd ./ui
+  rm -rf ./node_modules
+  npm install
   node ./build/build.js
   popd
   docker build -t "nookr_ui_${env}" ./ui
@@ -32,8 +34,12 @@ if [ "$env" != "local" ]; then
   echo "[INFO] Building Gateway Proxy"
   docker build -t "nookr_proxy_${env}" ./proxy
 
-
   echo "[INFO] Building Website"
+  pushd ./docs
+  rm -rf node_modules
+  npm install
+  ./node_modules/.bin/harp compile src/ dist/
+  popd
   docker build -t "nookr_docs_${env}" ./docs
 
   compose_file="compose_env.yml"

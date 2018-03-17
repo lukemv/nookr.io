@@ -2,7 +2,7 @@ version: '3'
 services:
   ui:
     image: node:carbon
-    command: npm run dev
+    command: bash -c "rm -rf node_modules/ && npm install && npm run dev"
     working_dir: /srv
     ports:
     - 8081:8080
@@ -14,7 +14,7 @@ services:
   api:
     restart: always
     image: node:carbon
-    command: npm run local
+    command: bash -c "rm -rf node_modules/ && npm install && npm run dev"
     working_dir: /srv
     ports:
     - 8082:80

@@ -7,7 +7,7 @@
   "description": "nookr.io",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "local": "node_modules/.bin/nodemon --watch /srv app.js",
+    "dev": "node_modules/.bin/nodemon --watch /srv app.js",
     "prod": "node app.js",
     "clean": "rm -rf node_modules"
   },

@@ -1,7 +1,7 @@
 version: '3'
 services:
   ui:
-    image: nookr_ui_${environment}
+    image: nookr_ui
     restart: always
     ports:
     - 8081:8080
@@ -9,7 +9,7 @@ services:
     - nookrnet
 
   api:
-    image: nookr_api_${environment}
+    image: nookr_api
     restart: always
     ports:
     - 8082:80
@@ -19,7 +19,7 @@ services:
     - nookrnet
 
   docs:
-    image: nookr_docs_${environment}
+    image: nookr_docs
     restart: always
     ports:
     - 9000:80
@@ -27,7 +27,7 @@ services:
     - nookrnet
 
   proxy:
-    image: nookr_proxy_${environment}
+    image: nookr_proxy
     restart: always
     ports:
     - 80:80

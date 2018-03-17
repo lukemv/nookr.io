@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script will build and run the container stack locally in much
+# the same way that it would be run in production.
+
 # Valid environments are (local|dev|prod)
 env="${1:?Usage: ./run.sh (local|dev|prod)}"
 echo "[INFO] Environment: $env"
@@ -31,11 +34,6 @@ if [ "$env" != "local" ]; then
 
 
   echo "[INFO] Building Website"
-  pushd ./docs
-  rm -rf ./node_modules
-  npm install
-  ./node_modules/.bin/harp compile src/ dist/
-  popd
   docker build -t "nookr_docs_${env}" ./docs
 
   compose_file="compose_env.yml"

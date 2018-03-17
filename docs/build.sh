@@ -6,6 +6,6 @@ npm install
 echo "[INFO] Compiling website"
 ./node_modules/.bin/harp compile src/ dist/
 echo "[INFO] Building Nginx container image"
-docker build -t "nookr_docs" .
+docker build -t "nookr-docs" .
 echo "[INFO] Cleaning up build artefacts"
 rm -rf dist

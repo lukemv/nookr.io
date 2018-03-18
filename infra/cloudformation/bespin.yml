@@ -1,0 +1,82 @@
+environments:
+  nookr:
+    account_id: 238164213705
+    vars:
+      HostedZoneId: "Z2QWTUDU3AAFZF"
+      HostedZoneName: "nookr.io"
+    tags:
+      Environment: "{environment}"
+
+plans:
+  all:
+  - network
+  - network-security
+  - iam
+  - data
+  - compute
+  - logs
+  - docker
+  - dns
+
+stacks:
+  network:
+    stack_name: "{environment}-network"
+    stack_yaml: "{:config_dir}/network.yml"
+    params_yaml:
+      Environment: "{environment}"
+      PublicAzCidrs: "10.222.1.0/24,10.222.2.0/24,10.222.3.0/24"
+      VpcCidrRange: "10.222.0.0/16"
+
+  network-security:
+    stack_name: "{environment}-network-security"
+    stack_yaml: "{:config_dir}/network-security.yml"
+    params_yaml:
+      VpcId: XXX_VPCID_XXX
+    vars:
+      VpcId: ["{environment}-network", "VpcId"]
+
+  iam:
+    stack_name: "{environment}-iam"
+    stack_yaml: "{:config_dir}/iam.yml"
+
+  data:
+    stack_name: "{environment}-data"
+    stack_yaml: "{:config_dir}/data.yml"
+
+  compute:
+    stack_name: "{environment}-compute"
+    stack_yaml: "{:config_dir}/compute.yml"
+    params_yaml:
+      InstanceRole: XXX_INSTANCEROLE_XXX
+      ImageId: ami-a677b6c4 #ECS Optimized AMI
+      InstanceType: t2.micro
+      KeyName: operators
+      SecurityGroups: XXX_SECURITYGROUPS_XXX
+      SubnetIds: XXX_SUBNETIDS_XXX
+      ProjectName: nookr
+      VolumeId: XXX_VOLUMEID_XXX
+    vars:
+      InstanceRole: ["{environment}-iam", "InstanceRole"]
+      SecurityGroups: ["{environment}-network-security", "SecurityGroups"]
+      SubnetIds: ["{environment}-network", "SubnetIdsPublic"]
+      VolumeId: ["{environment}-data", "VolumeId"]
+
+  logs:
+    stack_name: "{environment}-cloudwatch-logs"
+    stack_yaml: "{:config_dir}/cloudwatch-logs.yml"
+
+  docker:
+    stack_name: "{environment}-docker"
+    stack_yaml: "{:config_dir}/docker.yml"
+    params_yaml:
+      ProjectName: nookr
+
+  dns:
+    stack_name: "{environment}-dns"
+    stack_yaml: "{:config_dir}/dns.yml"
+    params_yaml:
+      HostedZoneId: XXX_HOSTEDZONEID_XXX
+      HostedZoneName: XXX_HOSTEDZONENAME_XXX
+      ServerIpAddress: XXX_SERVERIPADDRESS_XXX
+    vars:
+      ServerIpAddress: ["{environment}-compute", "IpAddress"]

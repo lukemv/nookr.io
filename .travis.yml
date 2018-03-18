@@ -20,3 +20,4 @@ after_success:
 - docker push "$REPO/nookr-docs:latest"
 - docker push "$REPO/nookr-proxy:latest"
 - docker push "$REPO/nookr-api:latest"
+- ./nookr_deploy.sh

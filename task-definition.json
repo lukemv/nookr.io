@@ -1,10 +1,34 @@
 {
     "family": "nookr",
-    "taskRoleArn": "",
+    "taskRoleArn": "arn:aws:iam::238164213705:role/nookr-iam-TaskRole-1AG5NVRV57J75",
     "networkMode": "bridge",
     "containerDefinitions": [
         {
-            "name": "nookr-ui",
+            "name": "proxy",
+            "links": ["api", "ui", "docs"],
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-proxy",
+            "cpu": 10,
+            "memory": 50,
+            "memoryReservation": 50,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": false,
+            "hostname": "proxy",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-group": "nookr-proxy"
+                }
+            }
+        },
+        {
+            "name": "ui",
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-ui",
             "cpu": 10,
             "memory": 50,
@@ -23,6 +47,55 @@
                 "options": {
                     "awslogs-region": "ap-southeast-2",
                     "awslogs-group": "nookr-ui"
+                }
+            }
+        },
+        {
+            "name": "api",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-api",
+            "cpu": 10,
+            "memory": 50,
+            "memoryReservation": 50,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 8082,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment" : [
+                { "name" : "Environment", "value" : "uat" }
+            ],
+            "essential": true,
+            "hostname": "api",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-group": "nookr-api"
+                }
+            }
+        },
+        {
+            "name": "docs",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-docs",
+            "cpu": 10,
+            "memory": 50,
+            "memoryReservation": 50,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 8083,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": false,
+            "hostname": "docs",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-group": "nookr-docs"
                 }
             }
         }

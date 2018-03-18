@@ -1,0 +1,26 @@
+---
+Description: Route53 - nookr.io dns
+
+Parameters:
+  HostedZoneId:
+    Type: String
+  HostedZoneName:
+    Type: String
+  ServerIpAddress:
+    Type: String
+
+Resources:
+  RecordSetServer:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      Comment: nookr.io standalone server
+      HostedZoneId: !Ref HostedZoneId
+      TTL: 500
+      Name: !Join
+      - "."
+      -
+        - "srv"
+        - !Ref HostedZoneName
+      Type: A
+      ResourceRecords:
+      - !Ref ServerIpAddress

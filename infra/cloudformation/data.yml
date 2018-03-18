@@ -1,0 +1,18 @@
+Description: nookr.io stateful data
+Resources:
+  Volume:
+    Type: "AWS::EC2::Volume"
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs ]
+      Encrypted: true
+      Size: 20
+      Tags:
+      - Key: Name
+        Value: nookr.io free tier volume
+      VolumeType: gp2
+
+Outputs:
+  VolumeId:
+    Value: !Ref Volume
+    Export:
+      Name: !Sub "${AWS::StackName}::VolumeId"

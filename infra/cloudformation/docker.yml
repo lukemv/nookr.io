@@ -1,0 +1,27 @@
+---
+Description: ECR/S - nookr.io docker
+Parameters:
+  ProjectName:
+    Type: String
+Resources:
+  Cluster:
+    Type: "AWS::ECS::Cluster"
+    Properties:
+      ClusterName: !Ref ProjectName
+
+  ApiRepository:
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: !Sub "${ProjectName}-api"
+  DocsRepository:
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: !Sub "${ProjectName}-docs"
+  UiRepository:
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: !Sub "${ProjectName}-ui"
+  ProxyRepository:
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: !Sub "${ProjectName}-proxy"

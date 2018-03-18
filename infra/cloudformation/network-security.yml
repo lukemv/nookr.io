@@ -1,0 +1,71 @@
+---
+Description: EC2 - nookr.io network security
+Parameters:
+  VpcId:
+    Type: String
+
+Resources:
+  SecurityGroupOperators:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Ingress Rules for operators
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: !Sub "${AWS::StackName}-operators"
+
+  SecurityGroupPublic:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Ingress Rules for public access
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: !Sub "${AWS::StackName}-public"
+
+  SecurityGroupIngressPublic80:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref SecurityGroupPublic
+      CidrIp: "0.0.0.0/0"
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+
+  SecurityGroupIngressPublic443:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref SecurityGroupPublic
+      CidrIp: "0.0.0.0/0"
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+
+  # Use this as a template to whitelist your IP
+  SecurityGroupIngressOperatorsLukeM:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref SecurityGroupOperators
+      IpProtocol: -1
+      CidrIp: "14.200.9.80/32"
+
+
+Outputs:
+  SecurityGroupOperators:
+    Value: !Ref SecurityGroupOperators
+    Export:
+      Name: !Sub "${AWS::StackName}::SecurityGroupOperators"
+
+  SecurityGroupPublic:
+    Value: !Ref SecurityGroupPublic
+    Export:
+      Name: !Sub "${AWS::StackName}::SecurityGroupPublic"
+
+  SecurityGroups:
+    Value: !Join
+    - ","
+    -
+      - !Ref SecurityGroupOperators
+      - !Ref SecurityGroupPublic
+    Export:
+      Name: !Sub "${AWS::StackName}::SecurityGroups"

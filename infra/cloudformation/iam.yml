@@ -1,0 +1,81 @@
+---
+Description: IAM - nookr.io access management
+Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+            - ecs.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ecs-tasks.amazonaws.com
+          Action:
+          - sts:AssumeRole
+
+  # Allow some metadata access.
+  PolicyEc2:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Sub "policy-${AWS::StackName}-ec2"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Action:
+          - "ec2:DescribeInstances"
+          Resource:
+          - "*"
+      Roles:
+      - !Ref InstanceRole
+
+  # Let the instance create log groups and streams.
+  PolicyLogs:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Sub "policy-${AWS::StackName}-logs"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Action:
+          - "logs:CreateLogGroup"
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          - "logs:DescribeLogStreams"
+          Resource:
+          - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group*"
+      Roles:
+      - !Ref InstanceRole
+      - !Ref TaskRole
+
+
+Outputs:
+  InstanceRole:
+    Value: !Ref InstanceRole
+    Export:
+      Name: !Sub "${AWS::StackName}::InstanceRole"
+
+  TaskRole:
+    Value: !Ref TaskRole
+    Export:
+      Name: !Sub "${AWS::StackName}::TaskRole"

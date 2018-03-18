@@ -31,6 +31,10 @@ services:
     restart: always
     ports:
     - 80:80
+    depends_on:
+    - api
+    - ui
+    - docs
     networks:
     - nookrnet
 

@@ -5,7 +5,7 @@
     "containerDefinitions": [
         {
             "name": "proxy",
-            "links": ["api", "ui", "docs"],
+            "links": ["api", "ui"],
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-proxy:TRAVIS_JOB_ID",
             "cpu": 10,
             "memory": 50,
@@ -73,29 +73,6 @@
                 "options": {
                     "awslogs-region": "ap-southeast-2",
                     "awslogs-group": "nookr-api"
-                }
-            }
-        },
-        {
-            "name": "docs",
-            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-docs:TRAVIS_JOB_ID",
-            "cpu": 10,
-            "memory": 50,
-            "memoryReservation": 50,
-            "portMappings": [
-                {
-                    "containerPort": 80,
-                    "hostPort": 8083,
-                    "protocol": "tcp"
-                }
-            ],
-            "essential": false,
-            "hostname": "docs",
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-region": "ap-southeast-2",
-                    "awslogs-group": "nookr-docs"
                 }
             }
         }

@@ -9,11 +9,6 @@ pushd ./ui
 ./build.sh
 popd
 
-echo "[INFO] Building Website"
-pushd ./docs
-./build.sh
-popd
-
 echo "[INFO] Building Gateway Proxy"
 pushd ./proxy
 ./build.sh
@@ -21,9 +16,6 @@ popd
 
 echo "[INFO] Tagging UI"
 docker tag "nookr-ui:latest" "$REPO/nookr-ui:latest"
-
-echo "[INFO] Tagging Website"
-docker tag "nookr-docs:latest" "$REPO/nookr-docs:latest"
 
 echo "[INFO] Tagging Proxy"
 docker tag "nookr-proxy:latest" "$REPO/nookr-proxy:latest"

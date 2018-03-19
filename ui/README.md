@@ -1,7 +1,5 @@
 # nookr
 
-> Find your nook
-
 ## Build Setup
 
 ``` bash

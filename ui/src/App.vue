@@ -1,10 +1,9 @@
 <template>
   <div id="app">
-    <header>
-      <span>Vue.js PWA</span>
-    </header>
+    <nav class="navbar navbar-dark bg-primary">
+      <span class="navbar-brand mb-0 h1">nookr.io</span>
+    </nav>
     <main>
-      <img src="./assets/logo.png" alt="Vue.js PWA">
       <router-view></router-view>
     </main>
   </div>
@@ -17,6 +16,6 @@ export default {
 </script>
 
 <style lang="sass">
-  $icon-font-path: "../node_modules/bootstrap-sass/assets/fonts/bootstrap/";
-  @import '../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap';
+@import '../bootstrap/scss/bootstrap';
 </style>
+

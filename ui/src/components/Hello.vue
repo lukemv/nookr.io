@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <div>{{ msg }}</div>
     <button v-on:click.prevent="get">GET request</button>
     <pre>{{ serverData }}</pre>
   </div>

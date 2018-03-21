@@ -6,7 +6,7 @@
         {
             "name": "proxy",
             "links": ["api", "ui"],
-            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-proxy:TRAVIS_JOB_ID",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-proxy:latest",
             "cpu": 10,
             "memory": 50,
             "memoryReservation": 50,
@@ -29,7 +29,7 @@
         },
         {
             "name": "ui",
-            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-ui:TRAVIS_JOB_ID",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-ui:latest",
             "cpu": 10,
             "memory": 50,
             "memoryReservation": 50,
@@ -52,7 +52,7 @@
         },
         {
             "name": "api",
-            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-api:TRAVIS_JOB_ID",
+            "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-api:latest",
             "cpu": 10,
             "memory": 50,
             "memoryReservation": 50,

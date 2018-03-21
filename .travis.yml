@@ -6,23 +6,11 @@ node_js:
 - 9.2
 script:
 - ./nookr_build.sh
-- docker tag "nookr-ui:latest" "$REPO/nookr-ui:latest"
-- docker tag "nookr-ui:latest" "$REPO/nookr-ui:$TRAVIS_JOB_ID"
-- docker tag "nookr-proxy:latest" "$REPO/nookr-proxy:latest"
-- docker tag "nookr-proxy:latest" "$REPO/nookr-proxy:$TRAVIS_JOB_ID"
-- docker tag "nookr-api:latest" "$REPO/nookr-api:latest"
-- docker tag "nookr-api:latest" "$REPO/nookr-api:$TRAVIS_JOB_ID"
 
 after_success:
 - docker --version
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
 - eval $(aws ecr get-login --region ap-southeast-2 --no-include-email)
-- docker push "$REPO/nookr-ui:latest"
-- docker push "$REPO/nookr-ui:$TRAVIS_JOB_ID"
-- docker push "$REPO/nookr-proxy:latest"
-- docker push "$REPO/nookr-proxy:$TRAVIS_JOB_ID"
-- docker push "$REPO/nookr-api:latest"
-- docker push "$REPO/nookr-api:$TRAVIS_JOB_ID"
-- sed "s/TRAVIS_JOB_ID/$TRAVIS_JOB_ID/g" task-definition-template.json > task-definition.json
+- ./nookr_push.sh
 - ./nookr_deploy.sh

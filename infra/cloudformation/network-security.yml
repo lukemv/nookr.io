@@ -41,15 +41,6 @@ Resources:
       FromPort: 443
       ToPort: 443
 
-  # Use this as a template to whitelist your IP
-  SecurityGroupIngressOperatorsLukeM:
-    Type: "AWS::EC2::SecurityGroupIngress"
-    Properties:
-      GroupId: !Ref SecurityGroupOperators
-      IpProtocol: -1
-      CidrIp: "14.200.9.80/32"
-
-
 Outputs:
   SecurityGroupOperators:
     Value: !Ref SecurityGroupOperators

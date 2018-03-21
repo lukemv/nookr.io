@@ -24,3 +24,14 @@ Resources:
       Type: A
       ResourceRecords:
       - !Ref ServerIpAddress
+
+  RecordSetApp:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      Comment: nookr.io temporary site
+      HostedZoneId: !Ref HostedZoneId
+      TTL: 500
+      Name: !Ref HostedZoneName
+      Type: A
+      ResourceRecords:
+      - !Ref ServerIpAddress

@@ -19,6 +19,21 @@ Resources:
       - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole
       - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
 
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ecs.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole
+
   TaskRole:
     Type: AWS::IAM::Role
     Properties:
@@ -79,3 +94,8 @@ Outputs:
     Value: !Ref TaskRole
     Export:
       Name: !Sub "${AWS::StackName}::TaskRole"
+
+  ServiceRole:
+    Value: !Ref ServiceRole
+    Export:
+      Name: !Sub "${AWS::StackName}::ServiceRole"

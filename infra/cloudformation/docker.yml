@@ -3,6 +3,11 @@ Description: ECR/S - nookr.io docker
 Parameters:
   ProjectName:
     Type: String
+  ServiceRole:
+    Type: String
+  TargetGroupProxy:
+    Type: String
+
 Resources:
   Cluster:
     Type: "AWS::ECS::Cluster"
@@ -25,3 +30,37 @@ Resources:
     Type: "AWS::ECR::Repository"
     Properties:
       RepositoryName: !Sub "${ProjectName}-proxy"
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Ref ProjectName
+      ContainerDefinitions:
+      - Name: ui
+        Image: nginx:alpine
+        PortMappings:
+        - ContainerPort: 80
+        Memory: 10
+      - Name: api
+        Image: nginx:alpine
+        PortMappings:
+        - ContainerPort: 80
+        Memory: 10
+      - Name: proxy
+        Image: nginx:alpine
+        PortMappings:
+        - ContainerPort: 80
+        Memory: 10
+
+  Service:
+    Type: "AWS::ECS::Service"
+    Properties:
+      ServiceName: !Ref ProjectName
+      Cluster: !Ref Cluster
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition
+      Role: !Ref ServiceRole
+      LoadBalancers:
+      - ContainerName: proxy
+        ContainerPort: 80
+        TargetGroupArn: !Ref TargetGroupProxy

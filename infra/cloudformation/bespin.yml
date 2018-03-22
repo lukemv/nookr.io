@@ -15,6 +15,7 @@ plans:
   - data
   - compute
   - logs
+  - proxy
   - docker
   - dns
 
@@ -65,11 +66,38 @@ stacks:
     stack_name: "{environment}-cloudwatch-logs"
     stack_yaml: "{:config_dir}/cloudwatch-logs.yml"
 
+  tls:
+    stack_yaml: "{:config_dir}/tls.yml"
+    stack_name: "{environment}-tls"
+    params_yaml:
+      DomainName: nookr.io
+      ValidationDomain: nookr.io
+
+  proxy:
+    stack_name: "{environment}-proxy"
+    stack_yaml: "{:config_dir}/proxy.yml"
+    params_yaml:
+      VpcId: XXX_VPCID_XXX
+      Subnets: XXX_SUBNETS_XXX
+      SecurityGroups: XXX_SECURITYGROUPS_XXX
+      Scheme: internet-facing
+      WildcardCertificateArn: XXX_WILDCARDCERTIFICATEARN_XXX
+    vars:
+      VpcId: ["{environment}-network", "VpcId"]
+      Subnets: ["{environment}-network", "SubnetIdsPublic"]
+      SecurityGroups: ["{environment}-network-security", "SecurityGroupPublic"]
+      WildcardCertificateArn: ["{environment}-tls", "WildcardCertificateArn"]
+
   docker:
     stack_name: "{environment}-docker"
     stack_yaml: "{:config_dir}/docker.yml"
     params_yaml:
       ProjectName: nookr
+      ServiceRole: XXX_SERVICEROLE_XXX
+      TargetGroupProxy: XXX_TARGETGROUPPROXY_XXX
+    vars:
+      ServiceRole: ["{environment}-iam", "ServiceRole"]
+      TargetGroupProxy: ["{environment}-proxy", "TargetGroupProxy"]
 
   dns:
     stack_name: "{environment}-dns"
@@ -78,5 +106,9 @@ stacks:
       HostedZoneId: XXX_HOSTEDZONEID_XXX
       HostedZoneName: XXX_HOSTEDZONENAME_XXX
       ServerIpAddress: XXX_SERVERIPADDRESS_XXX
+      LoadBalancerDNSName: XXX_LOADBALANCERDNSNAME_XXX
+      LoadBalancerCanonicalHostedZoneID: XXX_LOADBALANCERCANONICALHOSTEDZONEID_XXX
     vars:
       ServerIpAddress: ["{environment}-compute", "IpAddress"]
+      LoadBalancerDNSName: ["{environment}-proxy", "DNSName"]
+      LoadBalancerCanonicalHostedZoneID: ["{environment}-proxy","CanonicalHostedZoneID" ]

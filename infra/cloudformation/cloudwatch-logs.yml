@@ -5,17 +5,8 @@ Resources:
     Properties:
       LogGroupName: nookr-api
       RetentionInDays: 14
-  LogGroupDocs:
-    Type: "AWS::Logs::LogGroup"
-    Properties:
-      LogGroupName: nookr-docs
-      RetentionInDays: 14
   LogGroupUi:
     Type: "AWS::Logs::LogGroup"
     Properties:
       LogGroupName: nookr-ui
       RetentionInDays: 14
-  LogGroupProxy:
-    Type: "AWS::Logs::LogGroup"
-    Properties:
-      LogGroupName: nookr-proxy

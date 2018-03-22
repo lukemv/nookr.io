@@ -1,0 +1,24 @@
+---
+Description: TLS - nookr.io certificates
+Parameters:
+  DomainName:
+    Type: String
+  ValidationDomain:
+    Type: String
+
+Resources:
+  WildcardCertificate:
+    Type: "AWS::CertificateManager::Certificate"
+    Properties:
+      DomainName: !Sub "*.${DomainName}"
+      DomainValidationOptions:
+      - DomainName: !Sub "*.${DomainName}"
+        ValidationDomain: !Ref ValidationDomain
+      SubjectAlternativeNames:
+      - !Ref DomainName
+
+Outputs:
+  WildcardCertificateArn:
+    Value: !Ref WildcardCertificate
+    Export:
+      Name: !Sub "${AWS::StackName}::WildcardCertificateArn"

@@ -8,6 +8,10 @@ Parameters:
     Type: String
   ServerIpAddress:
     Type: String
+  LoadBalancerDNSName:
+    Type: String
+  LoadBalancerCanonicalHostedZoneID:
+    Type: String
 
 Resources:
   RecordSetServer:
@@ -28,10 +32,10 @@ Resources:
   RecordSetApp:
     Type: "AWS::Route53::RecordSet"
     Properties:
-      Comment: nookr.io temporary site
+      Comment: nookr.io load balancer
       HostedZoneId: !Ref HostedZoneId
-      TTL: 500
       Name: !Ref HostedZoneName
       Type: A
-      ResourceRecords:
-      - !Ref ServerIpAddress
+      AliasTarget:
+        DNSName: !Ref LoadBalancerDNSName
+        HostedZoneId: !Ref LoadBalancerCanonicalHostedZoneID

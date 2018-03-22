@@ -41,6 +41,13 @@ Resources:
       FromPort: 443
       ToPort: 443
 
+  SecurityGroupIngressVpc:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref SecurityGroupOperators
+      CidrIp: "10.0.0.0/8"
+      IpProtocol: -1
+
 Outputs:
   SecurityGroupOperators:
     Value: !Ref SecurityGroupOperators

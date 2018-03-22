@@ -23,7 +23,7 @@
               <div class="col-md-3">
                   <div class="form-control-feedback">
                       <span class="text-danger align-middle">
-                          <i class="fa fa-close"></i> Example error message
+                          <i class="fa fa-close"></i> Message
                       </span>
                   </div>
               </div>

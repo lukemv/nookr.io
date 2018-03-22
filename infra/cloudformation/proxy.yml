@@ -1,0 +1,96 @@
+---
+Description: nookr.io - load balancing
+
+Parameters:
+  VpcId:
+    Type: String
+  Subnets:
+    Type: List<String>
+  SecurityGroups:
+    Type: List<String>
+  Scheme:
+    Description: (internal|internet-facing)
+    Type: String
+  WildcardCertificateArn:
+    Type: String
+
+Resources:
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: !Ref Scheme
+      LoadBalancerAttributes:
+      -
+        Key: "idle_timeout.timeout_seconds"
+        Value: 30
+      Subnets: !Ref Subnets
+      SecurityGroups: !Ref SecurityGroups
+
+  TargetGroupProxy:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      Port: 80
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /health
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: 301
+
+  Listener80:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+      - TargetGroupArn: !Ref TargetGroupProxy
+        Type: forward
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  Listener443:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      Certificates:
+      - CertificateArn: !Ref WildcardCertificateArn
+      DefaultActions:
+      - TargetGroupArn: !Ref TargetGroupProxy
+        Type: forward
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+
+Outputs:
+  LoadBalancerArn:
+    Value: !Ref LoadBalancer
+    Export:
+      Name: !Sub "${AWS::StackName}::LoadBalancerArn"
+
+  DNSName:
+    Value: !GetAtt LoadBalancer.DNSName
+    Export:
+      Name: !Sub "${AWS::StackName}::DNSName"
+
+  CanonicalHostedZoneID:
+    Value: !GetAtt LoadBalancer.CanonicalHostedZoneID
+    Export:
+      Name: !Sub "${AWS::StackName}::CanonicalHostedZoneID"
+
+  LoadBalancerFullName:
+    Value: !GetAtt LoadBalancer.LoadBalancerFullName
+    Export:
+      Name: !Sub "${AWS::StackName}::LoadBalancerFullName"
+
+  LoadBalancerName:
+    Value: !GetAtt LoadBalancer.LoadBalancerName
+    Export:
+      Name: !Sub "${AWS::StackName}::LoadBalancerName"
+
+  TargetGroupProxy:
+    Value: !Ref TargetGroupProxy
+    Export:
+      Name: !Sub "${AWS::StackName}::TargetGroupProxy"
+

@@ -1,4 +1,3 @@
 ## nook.io
 
-* [Docs](docs)
 

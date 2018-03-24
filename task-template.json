@@ -2,14 +2,28 @@
     "family": "nookr",
     "taskRoleArn": "arn:aws:iam::238164213705:role/nookr-iam-TaskRole-1AG5NVRV57J75",
     "networkMode": "bridge",
+    "volumes": [
+        {
+          "name": "mongo-data",
+          "host": {
+            "sourcePath": "/var/nookr/mongo-data"
+          }
+        },
+        {
+          "name": "redis-data",
+          "host": {
+            "sourcePath": "/var/nookr/redis-data"
+          }
+        }
+    ],
     "containerDefinitions": [
         {
             "name": "proxy",
             "links": ["api", "ui"],
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-proxy:GITHASH",
             "cpu": 10,
-            "memory": 50,
-            "memoryReservation": 50,
+            "memory": 64,
+            "memoryReservation": 64,
             "portMappings": [
                 {
                     "containerPort": 80,
@@ -30,8 +44,8 @@
             "name": "ui",
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-ui:GITHASH",
             "cpu": 10,
-            "memory": 50,
-            "memoryReservation": 50,
+            "memory": 64,
+            "memoryReservation": 64,
             "essential": false,
             "hostname": "ui",
             "logConfiguration": {
@@ -46,10 +60,11 @@
             "name": "api",
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-api:GITHASH",
             "cpu": 10,
-            "memory": 50,
-            "memoryReservation": 50,
+            "memory": 64,
+            "memoryReservation": 64,
             "environment" : [
-                { "name" : "Environment", "value" : "uat" }
+                { "name" : "Environment", "value" : "uat" },
+                { "name" : "MongoUrl", "value" : "mongodb://mongo/nookr" }
             ],
             "essential": false,
             "hostname": "api",
@@ -60,6 +75,38 @@
                     "awslogs-group": "nookr-api"
                 }
             }
+        },
+        {
+            "name": "mongo",
+            "image": "mongo",
+            "cpu": 20,
+            "memory": 256,
+            "memoryReservation": 256,
+            "environment" : [
+                { "name" : "Environment", "value" : "uat" }
+            ],
+            "essential": true,
+            "hostname": "mongo",
+            "portMappings": [
+                {
+                    "containerPort": 27017,
+                    "hostPort": 27017,
+                    "protocol": "tcp"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-group": "nookr-mongo"
+                }
+            },
+            "mountPoints": [
+                {
+                  "sourceVolume": "mongo-data",
+                  "containerPath": "/data/db"
+                }
+            ]
         }
     ]
  }

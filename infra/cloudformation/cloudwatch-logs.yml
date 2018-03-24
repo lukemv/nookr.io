@@ -10,3 +10,18 @@ Resources:
     Properties:
       LogGroupName: nookr-ui
       RetentionInDays: 14
+  LogGroupProxy:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: nookr-proxy
+      RetentionInDays: 14
+  LogGroupMongo:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: nookr-mongo
+      RetentionInDays: 14
+  LogGroupRedis:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: nookr-redis
+      RetentionInDays: 14

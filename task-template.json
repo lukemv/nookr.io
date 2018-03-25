@@ -2,20 +2,6 @@
     "family": "nookr",
     "taskRoleArn": "arn:aws:iam::238164213705:role/nookr-iam-TaskRole-1AG5NVRV57J75",
     "networkMode": "bridge",
-    "volumes": [
-        {
-          "name": "mongo-data",
-          "host": {
-            "sourcePath": "/var/nookr/mongo-data"
-          }
-        },
-        {
-          "name": "redis-data",
-          "host": {
-            "sourcePath": "/var/nookr/redis-data"
-          }
-        }
-    ],
     "containerDefinitions": [
         {
             "name": "proxy",
@@ -59,12 +45,12 @@
         {
             "name": "api",
             "image": "238164213705.dkr.ecr.ap-southeast-2.amazonaws.com/nookr-api:GITHASH",
-            "cpu": 10,
-            "memory": 64,
+            "cpu": 20,
+            "memory": 128,
             "memoryReservation": 64,
             "environment" : [
                 { "name" : "Environment", "value" : "uat" },
-                { "name" : "MongoUrl", "value" : "mongodb://mongo/nookr" }
+                { "name" : "MongoUrl", "value" : "mongodb://srv.nookr.io/nookr" }
             ],
             "essential": false,
             "hostname": "api",
@@ -75,38 +61,6 @@
                     "awslogs-group": "nookr-api"
                 }
             }
-        },
-        {
-            "name": "mongo",
-            "image": "mongo",
-            "cpu": 20,
-            "memory": 256,
-            "memoryReservation": 256,
-            "environment" : [
-                { "name" : "Environment", "value" : "uat" }
-            ],
-            "essential": true,
-            "hostname": "mongo",
-            "portMappings": [
-                {
-                    "containerPort": 27017,
-                    "hostPort": 27017,
-                    "protocol": "tcp"
-                }
-            ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-region": "ap-southeast-2",
-                    "awslogs-group": "nookr-mongo"
-                }
-            },
-            "mountPoints": [
-                {
-                  "sourceVolume": "mongo-data",
-                  "containerPath": "/data/db"
-                }
-            ]
         }
     ]
  }

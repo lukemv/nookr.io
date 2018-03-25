@@ -1,0 +1,10 @@
+{
+    "cluster": "nookr",
+    "serviceName": "nookr-aux",
+    "taskDefinition": "nookr-aux:TASK_DEFINITION",
+    "desiredCount": 1,
+    "deploymentConfiguration": {
+        "maximumPercent": 200,
+        "minimumHealthyPercent": 0
+    }
+}

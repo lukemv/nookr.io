@@ -8,10 +8,12 @@
 
 
 
+
 **When to use what (in the context of this app only)?**
 
 * For data that needs to persist, use MongoDB. Examples include cached books and user profile data
 * In situations where it doesn't matter if you lose the data, use redis. Examples include cached data and user session information.
+
 
 
 
@@ -38,6 +40,13 @@ There are several tools which are appropriaate for accessing redis and node, thi
 
 
 
+
 **Accessing the services remotely**
 
 Add your ip address to the `nookr-network-security-operators` security group and use `srv.nookr.io` as the host name. Access using the same tooling that you would use locally
+
+**MongoDB:** mongodb://srv.nookr.io/nookr
+
+**Redis:** srv.nookr.io:6379 
+
+e.g. `redis-cli -h srv.nookr.io`

@@ -7,6 +7,9 @@
           <li class="ml-1" v-if="!('Login' === $route.name)">
             <router-link :to="{ name: 'Login' }">Login</router-link>
           </li>
+          <li class="ml-1" v-if="!('Register' === $route.name)">
+            <router-link :to="{ name: 'Register' }">Register</router-link>
+            </li>
         </ul>
       </span>
     </nav>

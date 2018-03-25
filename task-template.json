@@ -50,7 +50,7 @@
             "memoryReservation": 64,
             "environment" : [
                 { "name" : "Environment", "value" : "uat" },
-                { "name" : "MongoUrl", "value" : "mongodb://srv.nookr.io/nookr" }
+                { "name" : "MongoUrl", "value" : "mongodb://aux.nookr.io/nookr" }
             ],
             "essential": false,
             "hostname": "api",

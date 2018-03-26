@@ -2,10 +2,16 @@
 'use strict';
 const express = require('express');
 const payload = require('./payload');
+const bootstrap = require('./src/bootstrap');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
 const port = (env == 'prod' ||  env == 'uat' || env == 'docker') ? 80 : 8081;
+const mongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
+
+bootstrap.run({ mongoUrl })
+  .then((r) => console.log(`instance: ${r._id}`))
+  .catch(console.error);
 
 const app = express();
 

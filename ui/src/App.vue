@@ -4,7 +4,7 @@
       <span class="navbar-brand mb-0 h1">nookr.io</span>
       <span class="navbar-text">
         <ul class="nav">
-          <li class="ml-1" v-if="!('Login' === $route.name)">
+          <li class="ml-1" v-if="!('Login' === $route.name) && !('Register' === $route.name)">
             <router-link :to="{ name: 'Login' }">Login</router-link>
           </li>
           <li class="ml-1" v-if="!('Register' === $route.name)">

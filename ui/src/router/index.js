@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
+import p404 from '@/components/p404'
 import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
@@ -20,6 +21,10 @@ export default new Router({
       path: '/book-list',
       name: 'BookList',
       component: BookList
+    },
+    { path: '*',
+      name: 'p404',
+      component: p404
     },
     {
       path: '/register',

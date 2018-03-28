@@ -1,12 +1,12 @@
 <template>
-  <div class="container" >
-    <div class="row">
-      <h3 class="col-sm-12 col-md-7 ">Something happened! There are no books here</h3>
-      <!-- Image Author: Glaceonisice -->
-      <div class="img-wrapper col-sm-12 col-md-5">
-        <img class="img-responsive" src="../assets/twilight_sparkle.gif" alt="twilight sparkle">
+  <div class="content">
+    <div class="container" >
+      <div class="row">
+        <h3 class="col-sm-12 align-content-center">Something happened! There are no books here</h3>
+        <div class="img-wrapper col-sm-12">
+          <img class="img-responsive" src="../assets/404-error.png" alt="404 error image">
+        </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -18,16 +18,17 @@
 </script>
 
 <style scoped>
+  .content{
+    background-color: #e7e7e7;
+  }
 
   .row{
     padding-top: 30px;
     font-size: larger;
-
   }
   .row h3{
     padding: 50px;
     color: #7d7d7d;
-    padding-top: 20%;
     font-family: Roboto;
   }
 

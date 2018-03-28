@@ -8,6 +8,10 @@ import VueResource from 'vue-resource'
 Vue.config.productionTip = false
 Vue.use(VueResource)
 
+Vue.prototype.$api = window.location.host === 'localhost:8080' ? 'http://localhost:8081' : `https://nookr.io/api/v1`
+
+console.log(Vue.prototype.$baseUrl)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

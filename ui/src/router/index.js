@@ -6,7 +6,6 @@ import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 
-
 Vue.use(Router)
 
 export default new Router({

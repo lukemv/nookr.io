@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug API",
-      "program": "${workspaceFolder}/api/app.js",
+      "program": "${workspaceFolder}/api/src/app.js",
       "cwd": "${workspaceFolder}/api",
       "env": {
         "Environment": ""

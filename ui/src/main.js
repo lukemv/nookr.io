@@ -4,9 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
+import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 Vue.use(VueResource)
+Vue.use(Vuelidate)
 
 Vue.prototype.$api = window.location.host === 'localhost:8080' ? 'http://localhost:8081' : `https://nookr.io/api/v1`
 

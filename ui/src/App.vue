@@ -4,9 +4,7 @@
       <span class="navbar-brand mb-0 h1">nookr.io</span>
       <span class="navbar-text">
         <ul class="nav">
-          <!--Named views - https://router.vuejs.org/en/essentials/named-views.html-->
           <li class="ml-1" v-if="!('Login' === $route.name)">
-            <!--Router links - https://router.vuejs.org/en/api/router-link.html-->
             <router-link :to="{ name: 'Login' }">Login</router-link>
           </li>
           <li class="ml-1" v-if="!('Register' === $route.name)">

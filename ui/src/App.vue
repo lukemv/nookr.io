@@ -13,7 +13,7 @@
             <router-link :to="{ name: 'Register' }">Register</router-link>
           </li>
           <li class="ml-1">
-            <router-link :to="{ name: 'searchBooks' }">Search</router-link>
+            <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
           </li>
           <li class="ml-1">
             <router-link :to="{ name: 'BookList' }">Book List</router-link>

@@ -2,3 +2,4 @@
 */node_modules/
 .nookr/
 task-definition.json
+.idea/

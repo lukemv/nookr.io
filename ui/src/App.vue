@@ -36,3 +36,8 @@ export default {
 <style lang="sass">
 @import '../bootstrap/scss/bootstrap'
 </style>
+<style>
+  .navbar-brand {
+    font-family: Pacifico;
+  }
+</style>

@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <h2>Registration Form</h2>
+          <h2>Register Here</h2>
           <hr>
           <div v-if="serverMessage" class="alert alert-warning" role="alert">
           {{serverMessage}}
@@ -24,6 +24,7 @@
             v-bind:class="{
               'is-invalid': $v.email.$error,
               'is-valid': !$v.email.$invalid }"
+            ref="email"
             v-model.trim="email"
             @input="$v.email.$touch()"
             class="form-control"
@@ -154,6 +155,7 @@ export default {
           this.$router.push('/book-list')
         } else if (res.body.messageType === 'signupFailed') {
           this.usedEmails.push(this.email)
+          this.$refs.email.focus()
         }
         // Todo: Handle failed server messages by setting serverMessage
       })

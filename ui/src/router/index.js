@@ -5,7 +5,7 @@ import p404 from '@/components/p404'
 import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
-import searchBooks from '@/components/searchBooks'
+import SearchBooks from '@/components/SearchBooks'
 
 Vue.use(Router)
 
@@ -39,8 +39,8 @@ export default new Router({
     },
     {
       path: '/search',
-      name: 'searchBooks',
-      component: searchBooks
+      name: 'SearchBooks',
+      component: SearchBooks
     }
   ]
 })

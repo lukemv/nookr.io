@@ -41,6 +41,11 @@ export default new Router({
       path: '/search',
       name: 'SearchBooks',
       component: SearchBooks
+    },
+    {
+      path: '/NYBooks',
+      name: 'NYBooks',
+      component: NYBooks
     }
   ]
 })

@@ -30,11 +30,16 @@
         axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.bookID)
           .then((response) => {
             this.loading = false
-            this.book = response.data.items[0]
-            console.log('Books searched')
+            // check if it has returned a valid book
+            if (response.data.totalItems === 0) {
+              this.$router.push('book-not-found')
+            } else {
+              this.book = response.data.items[0]
+            }
           }, (error) => {
             this.loading = false
             console.log(error)
+            this.$router.push('book-not-found')
           })
       }
     },

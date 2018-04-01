@@ -15,6 +15,7 @@
         <div v-for="book in books">
           <div class="book center-block row">
             <div class="book-text col-sm-7 col-md-9">
+              <!--To Single Book Page-->
                 <router-link :to="{ path: 'book', query: { id: book.id }}">
                   <div class="book-title">{{book.volumeInfo.title}}</div>
                 </router-link>

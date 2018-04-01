@@ -39,7 +39,7 @@
       }
     },
     created: function () {
-      // Checks if a bookID has been sent, if not, and error is provided to user
+      // Checks if a bookID has been sent, if not, user is sent to error page
       if (typeof this.$route.query.id !== 'undefined') {
         this.searchBooks()
       } else {

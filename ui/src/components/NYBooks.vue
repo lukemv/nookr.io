@@ -1,13 +1,11 @@
 <template>
     <main class="container">
-      <div>
-        <button id="btn" class="waves-effect waves-light btn" v-on:click="getNYLIST()">Get List</button>
-      </div>
       <div id="book-list container ">
         <div v-for="book in books">
           <div class="book center-block row">
             <div class="book-text col-sm-7 col-md-9">
-                <div class="book-title">{{book.book_details}}</div>
+                <div class="book-title">{{book.book_details[0].title}}</div>
+                <div class="book-authors">{{book.book_details[0].author}}</div>
             </div>
           </div>
         </div>
@@ -25,20 +23,18 @@ export default {
         books: []
       }
     },
-    methods: {
-      getNYLIST: function () {
-        axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
-          params: {
-            'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
-            'list': 'combined-print-and-e-book-fiction'
-          }
+    created: function () {
+      axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
+        params: {
+          'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
+          'list': 'combined-print-and-e-book-fiction'
+        }
+      })
+        .then((response) => {
+          this.books = response.data.results
+        }, (error) => {
+          console.log(error)
         })
-          .then((response) => {
-            this.books = response.data.results
-          }, (error) => {
-            console.log(error)
-          })
-      }
     }
   }
 </script>

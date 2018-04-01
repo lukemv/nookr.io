@@ -6,6 +6,7 @@ import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
+import NYBooks from '@/components/NYBooks'
 
 Vue.use(Router)
 

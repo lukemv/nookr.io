@@ -16,6 +16,9 @@
           <li class="ml-1">
             <router-link :to="{ name: 'BookList' }">Book List</router-link>
           </li>
+          <li class="ml-1">
+            <router-link :to="{ name: 'NYBooks' }">NY Bestsellers</router-link>
+          </li>
         </ul>
       </span>
     </nav>
@@ -37,5 +40,8 @@ export default {
 <style>
   .navbar-brand {
     font-family: Pacifico;
+  }
+  li{
+    padding-left: 20px;
   }
 </style>

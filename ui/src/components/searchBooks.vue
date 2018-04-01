@@ -15,7 +15,9 @@
         <div v-for="book in books">
           <div class="book center-block row">
             <div class="book-text col-sm-7 col-md-9">
-                <a v-bind:href="book.volumeInfo.previewLink"><div class="book-title">{{book.volumeInfo.title}}</div></a>
+                <router-link :to="{ path: 'book', query: { id: book.id }}">
+                  <div class="book-title">{{book.volumeInfo.title}}</div>
+                </router-link>
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
               <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
             </div>

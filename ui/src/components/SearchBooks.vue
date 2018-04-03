@@ -1,10 +1,10 @@
 <template>
   <div id="search-books">
-    <main class="container">
+    <main id="search-list" class="container">
       <div id="search-panel" class="col-xs-12 col-sm-8 col-md-5 ">
-        <p>Enter A Book Title</p>
+        <h4>Enter A Book Title</h4>
         <input @keyup.enter="searchBooks()" v-model="searchInput" placeholder="Search">
-        <button id="btn" class="waves-effect waves-light btn" v-on:click="searchBooks()">Search<i class="material-icons right">send</i></button>
+        <button id="btn" type="button" class="btn btn-primary" v-on:click="searchBooks()">Search</button>
         <div v-if="loading">
           <div class="progress">
             <div class="indeterminate"></div>
@@ -61,15 +61,22 @@ export default {
 </script>
 
 <style>
-  #search-books{
+
+  #search-list{
     max-width: 1080px;
     margin: 0 auto;
   }
   #search-panel{
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 50px;
+    padding: 50px;
     margin: 0 auto;
+
+  }
+  #search-panel h4{
+    padding-bottom: 10px;
+    font-weight: normal;
+  }
+  #search-panel button{
+    margin-left: 15px;
   }
   .book{
     box-shadow: #d9d6d9 2px 2px 3px 1px;

@@ -41,4 +41,31 @@ module.exports = (passport) => {
       });
     });
   }));
+
+
+  passport.use('local-login', new LocalStrategy({
+    usernameField : 'email',
+    passwordField : 'password',
+    passReqToCallback : true
+  }, function(req, email, password, done) {
+    User.findOne({ 'local.email' :  email }, function(err, user) {
+      if (err)
+        return done(err);
+
+      if (!user)
+        return done(null, false, payload('loginFailed', {
+          message: `Error: '${email}' not found`
+        }));
+
+      if (!user.validPassword(password))
+        return done(null, false, payload('loginFailed', {
+          message: `Error: invalid password`
+        }));
+
+      return done(null, user, payload('loginSuccess', {
+        message: 'Login Success!', //Todo: Add something personal here
+        user: { email: user.local.email, _id: user.local._id }
+      }));
+    });
+  }));
 };

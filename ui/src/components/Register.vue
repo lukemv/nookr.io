@@ -4,10 +4,13 @@
       <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <h2>Register Here</h2>
+          <h2>Register Here <icon v-if="isLoading" class="fa-spin" name="sync"></icon></h2>
           <hr>
-          <div v-if="serverMessage" class="alert alert-warning" role="alert">
-          {{serverMessage}}
+          <div v-if="errorMessage" class="alert alert-warning" role="alert">
+          {{errorMessage}}
+          </div>
+          <div v-if="successMessage" class="alert alert-success" role="alert">
+          {{successMessage}}
           </div>
         </div>
       </div>
@@ -27,6 +30,7 @@
             ref="email"
             v-model.trim="email"
             @input="$v.email.$touch()"
+            :disabled="isLoading"
             class="form-control"
             id="email"
             autocomplete="username email"
@@ -56,6 +60,7 @@
             <input type="password"
               v-model="password"
               @input="$v.password.$touch()"
+              :disabled="isLoading"
               v-bind:class="{
               'is-invalid': $v.password.$error,
               'is-valid': !$v.password.$invalid }"
@@ -84,6 +89,7 @@
               'is-invalid': $v.passwordRepeat.$error,
               'is-valid': !$v.passwordRepeat.$invalid }"
               @input="$v.passwordRepeat.$touch()"
+              :disabled="isLoading"
               name="password_repeat"
               id="password_repeat"
               autocomplete="new-password"
@@ -105,7 +111,7 @@
             type="submit"
             class="btn btn-block btn-primary"
             v-on:click.prevent="submit"
-            :disabled="!$v.$invalid ? false : true"
+            :disabled="$v.$invalid || isLoading"
             >Register</button>
         </div>
         <div class="col-md-3"></div>
@@ -127,8 +133,10 @@ export default {
       email: '',
       password: '',
       passwordRepeat: '',
-      serverMessage: '',
-      usedEmails: []
+      usedEmails: [],
+      errorMessage: '',
+      successMessage: '',
+      isLoading: false
     }
   },
   validations: {
@@ -148,16 +156,21 @@ export default {
     }
   },
   methods: {
+    redirect: function () {
+      this.$router.push('/book-list')
+    },
     submit: function (event) {
-      console.log('submitting')
+      this.isLoading = true
+      this.errorMessage = this.successMessage = ''
       this.$http.post(`${this.$api}/register`, {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'signupSuccess') {
-          this.$router.push('/book-list')
+          this.successMessage = res.body.payload.message
+          window.setTimeout(this.redirect, 1600)
         } else if (res.body.messageType === 'signupFailed') {
+          this.isLoading = false
           this.usedEmails.push(this.email)
           this.$refs.email.focus()
         }
-        // Todo: Handle failed server messages by setting serverMessage
       })
     }
   }

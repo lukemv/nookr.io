@@ -23,7 +23,7 @@ module.exports = (passport) => {
 
         if (user) {
           return done(null, false, payload('signupFailed', {
-            message: `Error: '${email}' is already in use.`
+            message: `Register Failed: '${email}' is already in use.`
           }));
         } else {
           var newUser = new User();
@@ -34,7 +34,7 @@ module.exports = (passport) => {
               throw err;
 
             return done(null, newUser, payload('signupSuccess', {
-              message: 'Account created'
+              message: 'Register Success!'
             }));
           });
         }
@@ -54,16 +54,16 @@ module.exports = (passport) => {
 
       if (!user)
         return done(null, false, payload('loginFailed', {
-          message: `Error: '${email}' not found`
+          message: `Login Failed: '${email}' not found`
         }));
 
       if (!user.validPassword(password))
         return done(null, false, payload('loginFailed', {
-          message: `Error: invalid password`
+          message: `Login Failed: invalid password`
         }));
 
       return done(null, user, payload('loginSuccess', {
-        message: 'Login Success!', //Todo: Add something personal here
+        message: `Login Success!`,
         user: { email: user.local.email, _id: user.local._id }
       }));
     });

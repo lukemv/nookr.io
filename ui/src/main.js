@@ -6,6 +6,10 @@ import router from './router'
 import VueResource from 'vue-resource'
 import Vuelidate from 'vuelidate'
 
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
+Vue.component('icon', Icon)
+
 Vue.config.productionTip = false
 Vue.use(VueResource)
 Vue.use(Vuelidate)
@@ -19,5 +23,5 @@ new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App }
+  components: { App, Icon }
 })

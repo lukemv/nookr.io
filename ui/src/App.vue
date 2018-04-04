@@ -40,6 +40,7 @@ export default {
 <style>
   .navbar-brand {
     font-family: Pacifico;
+    font-size: 1.8rem;
   }
 
 </style>

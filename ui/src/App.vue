@@ -4,12 +4,6 @@
       <span class="navbar-brand mb-0 h1">nookr.io</span>
       <span class="navbar-text">
         <ul class="nav">
-          <li class="ml-1" v-if="!('Login' === $route.name)">
-            <router-link :to="{ name: 'Login' }">Login</router-link>
-          </li>
-          <li class="ml-1" v-if="!('Register' === $route.name)">
-            <router-link :to="{ name: 'Register' }">Register</router-link>
-          </li>
           <li class="ml-1">
             <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
           </li>
@@ -18,6 +12,12 @@
           </li>
           <li class="ml-1">
             <router-link :to="{ name: 'NYBooks' }">NY Bestsellers</router-link>
+          <li>|</li>
+          <li class="ml-1" v-if="!('Login' === $route.name)">
+            <router-link :to="{ name: 'Login' }">Login</router-link>
+          </li>
+          <li class="ml-1" v-if="!('Register' === $route.name)">
+            <router-link :to="{ name: 'Register' }">Register</router-link>
           </li>
         </ul>
       </span>
@@ -41,7 +41,8 @@ export default {
   .navbar-brand {
     font-family: Pacifico;
   }
-  li{
-    padding-left: 20px;
+  .nav li{
+    padding-left: 15px;
+    font-weight: lighter;
   }
 </style>

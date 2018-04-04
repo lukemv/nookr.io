@@ -3,14 +3,11 @@
       <div class="recommendation">
         <div class="recommendation-title">{{shelfTitle}}</div>
         <hr>
-        <span v-for="n in books.length">
+          <span v-for="n in books.length">
           <book-thumbnail class="book-thumbnail" v-bind:book="books[n-1]"></book-thumbnail>
         </span>
-
       </div>
-
     </div>
-
 </template>
 
 <script>
@@ -34,6 +31,8 @@
   }
   .book-thumbnail{
     display: inline-block;
+    vertical-align:top;
+    padding-right: 30px;
   }
 
 </style>

@@ -1,95 +1,124 @@
 <template>
   <div class="container">
-    <form class="form-horizontal" role="form" method="POST" action="/login">
+    <form class="form-horizontal" v-on:submit.prevent>
       <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <h2>Login Form</h2>
+          <h2>Login Here</h2>
           <hr>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-          <div class="form-group has-danger">
-            <label class="sr-only" for="email">E-Mail Address</label>
-            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-              <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-at"></i></div>
-              <input type="email" name="email" class="form-control" id="email"
-                     placeholder="you@example.com" required autofocus>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-control-feedback">
-                      <span class="text-danger align-middle">
-                          <i class="fa fa-close"></i> Email Validation Message
-                      </span>
+          <div v-if="serverMessage" class="alert alert-warning" role="alert">
+          {{serverMessage}}
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <div class="form-group">
-            <label class="sr-only" for="password">Password</label>
-            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-              <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-key"></i></div>
-              <input type="password" name="password" class="form-control" id="password"
-                     placeholder="Password" required>
-            </div>
+          <div class="form-group mb-2">
+            <label
+              v-bind:class="{
+              'text-invalid': $v.email.$error,
+              'text-success': !$v.email.$invalid }"
+            for="email">Email:</label>
+            <input type="email"
+            v-bind:class="{
+              'is-invalid': $v.email.$error,
+              'is-valid': !$v.email.$invalid }"
+            ref="email"
+            v-model.trim="email"
+            @input="$v.email.$touch()"
+            class="form-control"
+            id="email"
+            autocomplete="username email"
+            autofocus>
+            <small
+              v-if="!$v.email.required && $v.email.$dirty"
+              class="form-text text-danger">Email is required</small>
+            <small
+              v-if="!$v.email.email && $v.email.$dirty"
+              class="form-text text-danger">Please enter a valid email address</small>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="form-control-feedback">
-            <span class="text-danger align-middle"> Password Validation Message</span>
-          </div>
-        </div>
+        <div class="col-md-3"></div>
       </div>
       <div class="row">
         <div class="col-md-3"></div>
-        <div class="col-md-6" style="padding-top: .35rem">
-          <div class="form-check mb-2 mr-sm-2 mb-sm-0">
-            <label class="form-check-label">
-              <input class="form-check-input" name="remember"
-                     type="checkbox">
-              <span style="padding-bottom: .15rem">Remember me</span>
-            </label>
+        <div class="col-md-6">
+          <div class="form-group mb-2">
+            <label
+              v-bind:class="{
+              'text-invalid': $v.password.$error,
+              'text-success': !$v.password.$invalid }"
+              for="password_new">Password:</label>
+            <input type="password"
+              v-model="password"
+              @input="$v.password.$touch()"
+              v-bind:class="{
+              'is-invalid': $v.password.$error,
+              'is-valid': !$v.password.$invalid }"
+              name="password_new"
+              id="password_new"
+              autocomplete="new-password"
+              class="form-control">
+            <small
+              v-if="!$v.password.required && $v.password.$dirty" class="form-text text-danger">Password is required</small>
           </div>
         </div>
+        <div class="col-md-3"></div>
       </div>
       <div class="row" style="padding-top: 1rem">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</button>
-          <a class="btn btn-link" href="/password/reset">Forgot Your Password?</a>
+          <button
+            type="submit"
+            class="btn btn-block btn-primary"
+            v-on:click.prevent="submit"
+            :disabled="!$v.$invalid ? false : true"
+            >Login</button>
         </div>
-      </div>
-      <div class="row" style="padding-top: 1rem">
         <div class="col-md-3"></div>
-        <div class="col-md-6">
-          <!-- https://vuejs.org/v2/guide/events.html & https://router.vuejs.org/en/api/route-object.html & https://router.vuejs.org/en/essentials/navigation.html -->
-          <button type="button" class="btn btn-success" v-on:click="$router.push('register')"><i
-              class="fa fa-edit"></i> Register
-          </button>
-        </div>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'login',
-    data () {
-      return {
-        email: '',
-        password: '',
-        persist: false
-      }
+import { required, email } from 'vuelidate/lib/validators'
+
+export default {
+  name: 'login',
+  data () {
+    return {
+      email: '',
+      password: '',
+      serverMessage: ''
+    }
+  },
+  validations: {
+    email: {
+      required,
+      email
     },
-    methods: {}
+    password: {
+      required
+    }
+  },
+  methods: {
+    submit: function (event) {
+      this.serverMessage = ''
+      this.$http.post(`${this.$api}/login`, {email: this.email, password: this.password}).then(function (res) {
+        console.log(res)
+        if (res.body.messageType === 'loginSuccess') {
+          this.$router.push('/book-list')
+        } else if (res.body.messageType === 'loginFailed') {
+          this.serverMessage = res.body.payload.message
+          this.$refs.email.focus()
+        }
+        // Todo: Handle failed server messages by setting serverMessage
+      })
+    }
   }
+}
 </script>
 
 <style>

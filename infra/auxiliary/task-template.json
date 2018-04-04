@@ -1,0 +1,111 @@
+{
+  "family": "nookr-aux",
+  "taskRoleArn": "arn:aws:iam::238164213705:role/nookr-iam-TaskRole-1AG5NVRV57J75",
+  "networkMode": "host",
+  "volumes": [
+      {
+        "name": "mongo-data",
+        "host": {
+          "sourcePath": "/var/nookr/mongo-data"
+        }
+      },
+      {
+        "name": "redis-data",
+        "host": {
+          "sourcePath": "/var/nookr/redis-data"
+        }
+      }
+  ],
+  "containerDefinitions": [
+      {
+          "name": "mongo",
+          "image": "mongo",
+          "cpu": 20,
+          "memory": 256,
+          "memoryReservation": 256,
+          "environment" : [
+              { "name" : "Environment", "value" : "uat" }
+          ],
+          "essential": true,
+          "hostname": "mongo",
+          "portMappings": [
+              {
+                  "containerPort": 27017,
+                  "hostPort": 27017,
+                  "protocol": "tcp"
+              }
+          ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-region": "ap-southeast-2",
+                  "awslogs-group": "nookr-mongo"
+              }
+          },
+          "mountPoints": [
+              {
+                "sourceVolume": "mongo-data",
+                "containerPath": "/data/db"
+              }
+          ]
+      },
+      {
+          "name": "redis",
+          "image": "redis:alpine",
+          "cpu": 10,
+          "memory": 128,
+          "memoryReservation": 128,
+          "environment" : [
+              { "name" : "Environment", "value" : "uat" }
+          ],
+          "essential": true,
+          "hostname": "redis",
+          "portMappings": [
+              {
+                  "containerPort": 6379,
+                  "hostPort": 6379,
+                  "protocol": "tcp"
+              }
+          ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-region": "ap-southeast-2",
+                  "awslogs-group": "nookr-redis"
+              }
+          },
+          "mountPoints": [
+              {
+                "sourceVolume": "redis-data",
+                "containerPath": "/data"
+              }
+          ]
+      },
+      {
+        "name": "redirect",
+        "image": "jamessharp/docker-nginx-https-redirect",
+        "cpu": 10,
+        "memory": 64,
+        "memoryReservation": 64,
+        "environment" : [
+            { "name" : "Environment", "value" : "uat" }
+        ],
+        "essential": true,
+        "hostname": "redirect",
+        "portMappings": [
+            {
+                "containerPort": 80,
+                "hostPort": 80,
+                "protocol": "tcp"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-region": "ap-southeast-2",
+                "awslogs-group": "nookr-redirect"
+            }
+        }
+    }
+  ]
+}

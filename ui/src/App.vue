@@ -41,8 +41,5 @@ export default {
   .navbar-brand {
     font-family: Pacifico;
   }
-  .nav li{
-    padding-left: 15px;
-    font-weight: lighter;
-  }
+
 </style>

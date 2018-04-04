@@ -11,6 +11,11 @@
   list-style: none;
 }
 
+.nav li{
+  padding-left: 15px;
+  font-weight: 300;
+}
+
 .nav-link {
   display: block;
   padding: $nav-link-padding-y $nav-link-padding-x;

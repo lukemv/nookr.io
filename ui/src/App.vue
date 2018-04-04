@@ -4,19 +4,19 @@
       <span class="navbar-brand mb-0 h1">nookr.io</span>
       <span class="navbar-text">
         <ul class="nav">
-          <li class="ml-1">
+          <li class="ml-1 pl-2">
             <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
           </li>
-          <li class="ml-1">
+          <li class="ml-1 pl-2">
             <router-link :to="{ name: 'BookList' }">Book List</router-link>
           </li>
-          <li class="ml-1">
+          <li class="ml-1 pl-2">
             <router-link :to="{ name: 'NYBooks' }">NY Bestsellers</router-link>
-          <li>|</li>
-          <li class="ml-1" v-if="!('Login' === $route.name)">
+          <li class="pl-2">|</li>
+          <li class="ml-1 pl-2" v-if="!('Login' === $route.name)">
             <router-link :to="{ name: 'Login' }">Login</router-link>
           </li>
-          <li class="ml-1" v-if="!('Register' === $route.name)">
+          <li class="ml-1 pl-2" v-if="!('Register' === $route.name)">
             <router-link :to="{ name: 'Register' }">Register</router-link>
           </li>
         </ul>

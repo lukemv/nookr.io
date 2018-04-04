@@ -4,10 +4,13 @@
       <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <h2>Login Here</h2>
+          <h2>Login Here <icon v-if="isLoading" class="fa-spin" name="sync"></icon></h2>
           <hr>
-          <div v-if="serverMessage" class="alert alert-warning" role="alert">
-          {{serverMessage}}
+          <div v-if="errorMessage" class="alert alert-warning" role="alert">
+          {{errorMessage}}
+          </div>
+          <div v-if="successMessage" class="alert alert-success" role="alert">
+          {{successMessage}}
           </div>
         </div>
       </div>
@@ -27,6 +30,7 @@
             ref="email"
             v-model.trim="email"
             @input="$v.email.$touch()"
+            :disabled="isLoading"
             class="form-control"
             id="email"
             autocomplete="username email"
@@ -56,9 +60,10 @@
               v-bind:class="{
               'is-invalid': $v.password.$error,
               'is-valid': !$v.password.$invalid }"
-              name="password_new"
-              id="password_new"
-              autocomplete="new-password"
+              name="password"
+              id="password"
+              autocomplete="password"
+              :disabled="isLoading"
               class="form-control">
             <small
               v-if="!$v.password.required && $v.password.$dirty" class="form-text text-danger">Password is required</small>
@@ -73,8 +78,8 @@
             type="submit"
             class="btn btn-block btn-primary"
             v-on:click.prevent="submit"
-            :disabled="!$v.$invalid ? false : true"
-            >Login</button>
+            :disabled="$v.$invalid || isLoading"
+            >Login </button>
         </div>
         <div class="col-md-3"></div>
       </div>
@@ -91,7 +96,9 @@ export default {
     return {
       email: '',
       password: '',
-      serverMessage: ''
+      errorMessage: '',
+      successMessage: '',
+      isLoading: false
     }
   },
   validations: {
@@ -104,17 +111,21 @@ export default {
     }
   },
   methods: {
+    redirect: function () {
+      this.$router.push('/book-list')
+    },
     submit: function (event) {
-      this.serverMessage = ''
+      this.isLoading = true
+      this.errorMessage = this.successMessage = ''
       this.$http.post(`${this.$api}/login`, {email: this.email, password: this.password}).then(function (res) {
-        console.log(res)
         if (res.body.messageType === 'loginSuccess') {
-          this.$router.push('/book-list')
+          this.successMessage = res.body.payload.message
+          window.setTimeout(this.redirect, 1600)
         } else if (res.body.messageType === 'loginFailed') {
-          this.serverMessage = res.body.payload.message
+          this.errorMessage = res.body.payload.message
           this.$refs.email.focus()
+          this.isLoading = false
         }
-        // Todo: Handle failed server messages by setting serverMessage
       })
     }
   }

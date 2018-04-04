@@ -6,6 +6,7 @@ import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
+import NYBooks from '@/components/NYBooks'
 import SingleBook from '@/components/SingleBook'
 
 Vue.use(Router)
@@ -42,6 +43,11 @@ export default new Router({
       path: '/search',
       name: 'SearchBooks',
       component: SearchBooks
+    },
+    {
+      path: '/NYBooks',
+      name: 'NYBooks',
+      component: NYBooks
     },
     {
       path: '/book',

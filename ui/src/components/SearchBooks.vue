@@ -1,17 +1,26 @@
 <template>
-  <div id="search-books">
-    <main id="search-list" class="container">
-      <div id="search-panel" class="col-xs-12 col-sm-8 col-md-5 ">
-        <h4>Enter A Book Title</h4>
-        <input @keyup.enter="searchBooks()" v-model="searchInput" placeholder="Search">
-        <button id="btn" type="button" class="btn btn-primary" v-on:click="searchBooks()">Search</button>
-        <div v-if="loading">
-          <div class="progress">
-            <div class="indeterminate"></div>
-          </div>
-        </div>
+  <div class="search-wrapper">
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <h3>Book Search <icon v-if="isLoading" class="fa-spin" name="sync"></icon></h3>
+        <form class="form" v-on:submit.prevent>
+          <input @keyup.enter="searchBooks()"
+          v-model="searchInput"
+          :disabled="isLoading"
+          class="form-control mb-2 mr-sm-2"
+          placeholder="e.g. Harry Potter">
+          <button
+            type="button"
+            class="btn btn-primary"
+            :disabled="isLoading"
+            v-on:click="searchBooks()">Search</button>
+        </form>
       </div>
-      <div id="book-list container ">
+      <div class="col-md-3"></div>
+    </div>
+    <main id="search-list">
+    <div id="book-list container ">
         <div v-for="book in books">
           <div class="book center-block row">
             <div class="book-text col-sm-7 col-md-9">
@@ -40,19 +49,19 @@ export default {
     data () {
       return {
         books: [],
-        loading: false,
+        isLoading: false,
         searchInput: ''
       }
     },
     methods: {
       searchBooks: function () {
-        this.loading = true
+        this.isLoading = true
         axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.searchInput)
           .then((response) => {
-            this.loading = false
+            this.isLoading = false
             this.books = response.data.items
           }, (error) => {
-            this.loading = false
+            this.isLoading = false
             console.log(error)
           })
       }
@@ -61,24 +70,11 @@ export default {
 </script>
 
 <style>
+ .search-wrapper {
+   margin-top: 50px;
+ }
 
-  #search-list{
-    max-width: 1080px;
-    margin: 0 auto;
-  }
-  #search-panel{
-    padding: 50px;
-    margin: 0 auto;
-
-  }
-  #search-panel h4{
-    padding-bottom: 10px;
-    font-weight: normal;
-  }
-  #search-panel button{
-    margin-left: 15px;
-  }
-  .book{
+ .book{
     box-shadow: #d9d6d9 2px 2px 3px 1px;
     max-width: 700px;
     padding: 20px;
@@ -101,5 +97,4 @@ export default {
     height: 150px;
     width: auto;
   }
-
 </style>

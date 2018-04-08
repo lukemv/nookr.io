@@ -3,32 +3,51 @@
 var mongoose = require('mongoose');
 const express = require('express');
 const passport = require('passport');
-const session = require('express-session');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+
+const payload = require('./payload');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
 const port = (env == 'prod' ||  env == 'uat' || env == 'docker') ? 80 : 8081;
 const mongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
+const redisHost = process.env.RedisHost || 'localhost';
+const redisPort = process.env.RedisPort || 6379;
+
 const app = express();
 
-app.use(session({ secret: 'S4Hw2DEsTSsXZEQm4bnc7MNj' }));
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
 mongoose.connect(mongoUrl);
-require('./passport')(passport);
+
+const redisOptions = {
+  host: redisHost,
+  port: redisPort
+};
+
+const session = require('./session')(redisOptions);
+require('./passport')(passport, session);
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
-require('./routes.js')(app, passport);
+require('./routes.js')(app, passport, session);
+
+// Handle unauthorized requests here.
+// It's important that method's with
+// 4 arguments come after the others.
+// This is what identifies them as error handlers
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send(payload('unauthorized'));
+  }
+});
 
 app.listen(port, host);
 

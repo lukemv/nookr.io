@@ -50,7 +50,9 @@
             "memoryReservation": 64,
             "environment" : [
                 { "name" : "Environment", "value" : "uat" },
-                { "name" : "MongoUrl", "value" : "mongodb://aux.nookr.io/nookr" }
+                { "name" : "MongoUrl", "value" : "mongodb://aux.nookr.io/nookr" },
+                { "name" : "RedisHost", "value" : "aux.nookr.io" },
+                { "name" : "RedisPort", "value" : 6379 }
             ],
             "essential": false,
             "hostname": "api",

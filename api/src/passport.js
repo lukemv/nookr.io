@@ -1,8 +1,9 @@
-var LocalStrategy = require('passport-local').Strategy;
-var payload = require('./payload');
-var User = require('./models/user');
+const LocalStrategy = require('passport-local').Strategy;
 
-module.exports = (passport) => {
+const payload = require('./payload');
+const User = require('./models/user');
+
+module.exports = (passport, session) => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
@@ -26,22 +27,35 @@ module.exports = (passport) => {
             message: `Register Failed: '${email}' is already in use.`
           }));
         } else {
-          var newUser = new User();
-          newUser.local.email = email;
-          newUser.local.password = newUser.generateHash(password);
-          newUser.save(function(err) {
+          var user = new User();
+          user.local.email = email;
+          user.local.password = user.generateHash(password);
+
+          user.save(function(err) {
             if (err)
               throw err;
 
-            return done(null, newUser, payload('signupSuccess', {
-              message: 'Register Success!'
+            const userModel = {
+              id: user.id.toString(),
+              local: {
+                // Attach properties that are on the User model here
+                // to pass them on to the client.
+                email: user.local.email
+              }
+            }
+
+            const tExp = session.generateToken(user._id);
+            return done(null, user, payload('signupSuccess', {
+              message: 'Register Success!',
+              token: tExp.token,
+              expires: tExp.expires,
+              user: userModel
             }));
           });
         }
       });
     });
   }));
-
 
   passport.use('local-login', new LocalStrategy({
     usernameField : 'email',
@@ -62,9 +76,22 @@ module.exports = (passport) => {
           message: `Login Failed: invalid password`
         }));
 
+      const tExp = session.generateToken(user._id);
+
+      const userModel = {
+        id: user.id.toString(),
+        local: {
+          // Attach properties that are on the User model here
+          // to pass them on to the client.
+          email: user.local.email
+        }
+      };
+
       return done(null, user, payload('loginSuccess', {
         message: `Login Success!`,
-        user: { email: user.local.email, _id: user.local._id }
+        token: tExp.token,
+        expires: tExp.expires,
+        user: userModel
       }));
     });
   }));

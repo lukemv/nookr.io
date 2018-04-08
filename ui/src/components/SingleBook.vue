@@ -5,9 +5,12 @@
     </div>
     <div class="col-xs-12 col-sm-9">
       <div class="book-title">{{book.volumeInfo.title}}</div>
+      <div class="book-google-rating">{{book.volumeInfo.averageRating}} stars from {{book.volumeInfo.ratingsCount}} readers.</div>
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
+      <div class="book-publisher-and-date-and-pages"> {{book.volumeInfo.publisher}}, {{book.volumeInfo.publishedDate.match(/\d{4}/).toString()}} - {{book.volumeInfo.pageCount}} pages.</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
       <p class="book-description">{{book.volumeInfo.description}}</p>
+      <div class="book-isbns" v-for="isbn in book.volumeInfo.industryIdentifiers">{{isbn}}</div>
     </div>
   </div>
 </template>
@@ -35,6 +38,7 @@
               this.$router.push('book-not-found')
             } else {
               this.book = response.data.items[0]
+              console.log(response.data.items[0])
             }
           }, (error) => {
             this.loading = false
@@ -72,7 +76,7 @@
     font-size: larger;
     color: #5f5b5f;
   }
-  .book-categories{
+  .book-categories, .book-google-rating, .book-publisher-and-date-and-pages, book-isbns {
     padding-top: 10px;
     color: #8a848a;
   }

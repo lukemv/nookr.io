@@ -7,7 +7,7 @@ import VueResource from 'vue-resource'
 import VueCookie from 'vue-cookie'
 import Vuelidate from 'vuelidate'
 
-import Navigation from '@/components/navigation'
+import Navigation from '@/components/Navigation'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 

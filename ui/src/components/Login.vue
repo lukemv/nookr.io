@@ -117,9 +117,10 @@ export default {
     submit: function (event) {
       this.isLoading = true
       this.errorMessage = this.successMessage = ''
-      this.$http.post(`${this.$api}/login`, {email: this.email, password: this.password}).then(function (res) {
+      this.$http.post(`${this.$globals.api}/login`, {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'loginSuccess') {
           this.successMessage = res.body.payload.message
+          this.$cookie.set(this.$globals.tokenCookieName, res.body.payload.token)
           window.setTimeout(this.redirect, 1600)
         } else if (res.body.messageType === 'loginFailed') {
           this.errorMessage = res.body.payload.message

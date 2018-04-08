@@ -1,6 +1,10 @@
-var LocalStrategy = require('passport-local').Strategy;
-var payload = require('./payload');
-var User = require('./models/user');
+const ObjectId = require('mongodb').ObjectID;
+
+const LocalStrategy = require('passport-local').Strategy;
+
+const payload = require('./payload');
+const User = require('./models/user');
+const session = require('./session');
 
 module.exports = (passport) => {
   passport.serializeUser((user, done) => {
@@ -26,22 +30,24 @@ module.exports = (passport) => {
             message: `Register Failed: '${email}' is already in use.`
           }));
         } else {
-          var newUser = new User();
-          newUser.local.email = email;
-          newUser.local.password = newUser.generateHash(password);
-          newUser.save(function(err) {
+          var user = new User();
+          user.local.email = email;
+          user.local.password = user.generateHash(password);
+
+          user.save(function(err) {
             if (err)
               throw err;
 
-            return done(null, newUser, payload('signupSuccess', {
-              message: 'Register Success!'
+            const token = session.generateToken(user);
+            return done(null, user, payload('signupSuccess', {
+              message: 'Register Success!',
+              token: token
             }));
           });
         }
       });
     });
   }));
-
 
   passport.use('local-login', new LocalStrategy({
     usernameField : 'email',
@@ -62,9 +68,11 @@ module.exports = (passport) => {
           message: `Login Failed: invalid password`
         }));
 
+      const token = session.generateToken(user);
+
       return done(null, user, payload('loginSuccess', {
         message: `Login Success!`,
-        user: { email: user.local.email, _id: user.local._id }
+        token: token
       }));
     });
   }));

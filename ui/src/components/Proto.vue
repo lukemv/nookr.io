@@ -23,8 +23,12 @@ export default {
   },
   methods: {
     get: function () {
-      this.$http.get(`${this.$api}/`).then(function (data) {
+      this.$http.get(`${this.$globals.api}/profile`).then(function (data) {
+        console.log(data)
         this.msg = data
+      }, function (error) {
+        console.log(error)
+        // ignore 401's and all other errors
       })
     }
   }

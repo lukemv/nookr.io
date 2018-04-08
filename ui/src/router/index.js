@@ -8,6 +8,7 @@ import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
 import NYBooks from '@/components/NYBooks'
 import SingleBook from '@/components/SingleBook'
+import SessionEnd from '@/components/SessionEnd'
 
 Vue.use(Router)
 
@@ -53,6 +54,12 @@ export default new Router({
       path: '/book',
       name: 'SingleBook',
       component: SingleBook
+    },
+    {
+      path: '/session-end',
+      name: 'SessionEnd',
+      component: SessionEnd
     }
+
   ]
 })

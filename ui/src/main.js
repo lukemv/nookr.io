@@ -7,9 +7,12 @@ import VueResource from 'vue-resource'
 import VueCookie from 'vue-cookie'
 import Vuelidate from 'vuelidate'
 
+import Navigation from '@/components/navigation'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
+
 Vue.component('icon', Icon)
+Vue.component('navigation', Navigation)
 
 Vue.config.productionTip = false
 
@@ -24,16 +27,35 @@ const globals = new Vue({
     api: api,
     tokenCookieKey: 'nookr-jwt',
     tokenExpiresCookieKey: 'nookr-jwt-expires',
-    slidingRefreshSeconds: 300
+    slidingRefreshSeconds: 300,
+    user: null
   },
   methods: {
-    saveAuthToken: function (payload) {
+    updateProfile: function () {
+      this.$http.get(`${this.$globals.api}/profile`).then(function (data) {
+        this.user = data.body.payload.user
+      }, function (error) {
+        console.log(error)
+      })
+    },
+    startSession: function (payload) {
       // Expires is the number of seconds from now.
       var cookieOptions = { expires: payload.expires }
       this.$cookie.set(this.tokenCookieKey, payload.token, cookieOptions)
       const expires = new Date()
       expires.setSeconds(expires.getSeconds() + payload.expires)
       this.$cookie.set(this.tokenExpiresCookieKey, JSON.stringify(expires), cookieOptions)
+      this.updateProfile()
+    },
+    endSession: function () {
+      this.$http.get(`${this.$globals.api}/logoff`).then(function (data) {
+        this.user = null
+        this.$cookie.set(this.tokenExpiresCookieKey, null)
+        this.$cookie.set(this.tokenCookieKey, null)
+        router.push('/session-end')
+      }, function (error) {
+        console.log(error)
+      })
     }
   }
 })
@@ -67,5 +89,5 @@ new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App, Icon }
+  components: { App, Icon, Navigation }
 })

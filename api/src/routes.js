@@ -92,8 +92,6 @@ module.exports = function(app, passport, session) {
     return res.status(200).send(pl);
   });
 
-
-
   app.get('/health', (req, res, next) => {
     res.status(200).send(payload('health', {
       message: {

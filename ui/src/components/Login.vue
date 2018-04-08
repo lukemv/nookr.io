@@ -120,7 +120,7 @@ export default {
       this.$http.post(`${this.$globals.api}/login`, {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'loginSuccess') {
           this.successMessage = res.body.payload.message
-          this.$globals.saveAuthToken(res.body.payload)
+          this.$globals.startSession(res.body.payload)
           window.setTimeout(this.redirect, 1600)
         } else if (res.body.messageType === 'loginFailed') {
           this.errorMessage = res.body.payload.message

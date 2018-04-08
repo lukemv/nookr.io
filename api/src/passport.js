@@ -35,11 +35,21 @@ module.exports = (passport, session) => {
             if (err)
               throw err;
 
+            const userModel = {
+              id: user.id.toString(),
+              local: {
+                // Attach properties that are on the User model here
+                // to pass them on to the client.
+                email: user.local.email
+              }
+            }
+
             const tExp = session.generateToken(user._id);
             return done(null, user, payload('signupSuccess', {
               message: 'Register Success!',
               token: tExp.token,
-              expires: tExp.expires
+              expires: tExp.expires,
+              user: userModel
             }));
           });
         }
@@ -68,10 +78,20 @@ module.exports = (passport, session) => {
 
       const tExp = session.generateToken(user._id);
 
+      const userModel = {
+        id: user.id.toString(),
+        local: {
+          // Attach properties that are on the User model here
+          // to pass them on to the client.
+          email: user.local.email
+        }
+      };
+
       return done(null, user, payload('loginSuccess', {
         message: `Login Success!`,
         token: tExp.token,
-        expires: tExp.expires
+        expires: tExp.expires,
+        user: userModel
       }));
     });
   }));

@@ -22,14 +22,26 @@ const api = window.location.host === 'localhost:8080' ? 'http://localhost:8081' 
 const globals = new Vue({
   data: {
     api: api,
-    tokenCookieName: 'nookr-jwt'
+    tokenCookieKey: 'nookr-jwt',
+    tokenExpiresCookieKey: 'nookr-jwt-expires',
+    slidingRefreshSeconds: 300
+  },
+  methods: {
+    saveAuthToken: function (payload) {
+      // Expires is the number of seconds from now.
+      var cookieOptions = { expires: payload.expires }
+      this.$cookie.set(this.tokenCookieKey, payload.token, cookieOptions)
+      const expires = new Date()
+      expires.setSeconds(expires.getSeconds() + payload.expires)
+      this.$cookie.set(this.tokenExpiresCookieKey, JSON.stringify(expires), cookieOptions)
+    }
   }
 })
 
 Vue.prototype.$globals = globals
 
 Vue.http.interceptors.push(function (request) {
-  const token = this.$cookie.get(this.$globals.tokenCookieName)
+  const token = this.$cookie.get(this.$globals.tokenCookieKey)
 
   if (token !== '') {
     console.log('authenticated request')
@@ -48,7 +60,7 @@ Vue.http.interceptors.push(function (request, next) {
   })
 })
 
-console.log(Vue.prototype.$baseUrl)
+console.log(`API: ${Vue.prototype.$baseUrl}`)
 
 /* eslint-disable no-new */
 new Vue({

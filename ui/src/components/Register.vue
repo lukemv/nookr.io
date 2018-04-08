@@ -165,7 +165,7 @@ export default {
       this.$http.post(`${this.$globals.api}/register`, {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'signupSuccess') {
           this.successMessage = res.body.payload.message
-          this.$cookie.set(this.$globals.tokenCookieName, res.body.payload.token)
+          this.$globals.saveAuthToken(res.body.payload)
           window.setTimeout(this.redirect, 1600)
         } else if (res.body.messageType === 'signupFailed') {
           this.isLoading = false

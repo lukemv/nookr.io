@@ -1,12 +1,9 @@
-const ObjectId = require('mongodb').ObjectID;
-
 const LocalStrategy = require('passport-local').Strategy;
 
 const payload = require('./payload');
 const User = require('./models/user');
-const session = require('./session');
 
-module.exports = (passport) => {
+module.exports = (passport, session) => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
@@ -38,10 +35,11 @@ module.exports = (passport) => {
             if (err)
               throw err;
 
-            const token = session.generateToken(user);
+            const tExp = session.generateToken(user._id);
             return done(null, user, payload('signupSuccess', {
               message: 'Register Success!',
-              token: token
+              token: tExp.token,
+              expires: tExp.expires
             }));
           });
         }
@@ -68,11 +66,12 @@ module.exports = (passport) => {
           message: `Login Failed: invalid password`
         }));
 
-      const token = session.generateToken(user);
+      const tExp = session.generateToken(user._id);
 
       return done(null, user, payload('loginSuccess', {
         message: `Login Success!`,
-        token: token
+        token: tExp.token,
+        expires: tExp.expires
       }));
     });
   }));

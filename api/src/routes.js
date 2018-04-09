@@ -2,6 +2,7 @@ const payload = require('./payload');
 const config = require('./config');
 const jwt = require('express-jwt');
 const User = require('./models/user');
+const libnook = require('./libnook');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
@@ -99,4 +100,12 @@ module.exports = function(app, passport, session) {
       }
     }));
   })
+
+  app.get('/googleVolumeSearch', (req, res, next) => {
+    const q = req.query.q;
+    libnook.googleVolumeSearch(q).then((volumes) => {
+      res.status(200).send(payload('googleVolumeList', {volumes}));
+    });
+  });
+
 };

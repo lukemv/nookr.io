@@ -31,7 +31,7 @@
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
               <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
             </div>
-            <div class="book-image col-sm-5 col-md-3">
+            <div v-if="book.volumeInfo.imageLinks" class="book-image col-sm-5 col-md-3">
               <img  v-bind:src="book.volumeInfo.imageLinks.smallThumbnail" alt="book thumbnail">
             </div>
           </div>
@@ -42,31 +42,29 @@
 </template>
 
 <script>
-  import axios from 'axios'
-
 export default {
-    name: 'search-books',
-    data () {
-      return {
-        books: [],
-        isLoading: false,
-        searchInput: ''
-      }
-    },
-    methods: {
-      searchBooks: function () {
-        this.isLoading = true
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.searchInput)
-          .then((response) => {
-            this.isLoading = false
-            this.books = response.data.items
-          }, (error) => {
-            this.isLoading = false
-            console.log(error)
-          })
-      }
+  name: 'search-books',
+  data () {
+    return {
+      books: [],
+      isLoading: false,
+      searchInput: ''
+    }
+  },
+  methods: {
+    searchBooks: function () {
+      this.isLoading = true
+      this.$http.get(`${this.$globals.api}/googleVolumeSearch?q=${this.searchInput}`)
+        .then((res) => {
+          this.books = res.body.payload.volumes.items
+          this.isLoading = false
+        }, (error) => {
+          this.isLoading = false
+          console.log(error)
+        })
     }
   }
+}
 </script>
 
 <style>

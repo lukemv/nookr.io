@@ -6,7 +6,7 @@ const libnook = require('./libnook');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
-  const authWhitelist = {path: ['/health', '/register', '/login']};
+  const authWhitelist = {path: ['/health', '/register', '/login', '/googleVolumeSearch']};
   const isRevokedCallback = (req, payload, done) => {
     const issuer = payload.iss;
     const userId = payload.cid;

@@ -10,6 +10,14 @@
           :disabled="isLoading"
           class="form-control mb-2 mr-sm-2"
           placeholder="e.g. Harry Potter">
+          <div class="search-types">
+            <input type="radio"  id="keyword" value="" v-model="searchType">
+            <label for="keyword">Search by Keyword</label>
+            <input type="radio" id="title" value="intitle:" v-model="searchType">
+            <label for="title">Search by Title</label>
+            <input type="radio" id="author" value="inauthor:" v-model="searchType">
+            <label for="author">Search by Author</label>
+          </div>
           <button
             type="button"
             class="btn btn-primary"
@@ -48,20 +56,31 @@ export default {
     return {
       books: [],
       isLoading: false,
-      searchInput: ''
+      isSearched: false,
+      searchInput: '',
+      searchType: ''
     }
   },
   methods: {
     searchBooks: function () {
       this.isLoading = true
-      this.$http.get(`${this.$globals.api}/googleVolumeSearch?q=${this.searchInput}`)
+      this.$http.get(`${this.$globals.api}/googleVolumeSearch?q=${this.searchType}${this.searchInput}`)
         .then((res) => {
           this.books = res.body.payload.volumes.items
           this.isLoading = false
+          this.isSearched = true
         }, (error) => {
           this.isLoading = false
           console.log(error)
         })
+    }
+  },
+  watch: {
+    // if there has been a previous search, the results are updated if the radio buttons are changed
+    searchType: function () {
+      if (this.isSearched) {
+        this.searchBooks()
+      }
     }
   }
 }
@@ -71,7 +90,9 @@ export default {
  .search-wrapper {
    margin-top: 50px;
  }
-
+ .search-types input{
+   margin-left: 10px;
+ }
  .book{
     box-shadow: #d9d6d9 2px 2px 3px 1px;
     max-width: 700px;

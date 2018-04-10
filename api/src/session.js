@@ -5,7 +5,7 @@ const uuid = require('uuid/v4');
 
 module.exports = (redisOptions) => {
 
-  const client = redis.createClient();
+  const client = redis.createClient(redisOptions.port, redisOptions.host);
 
   client.on("error", function (err) {
     console.log("RedisError:" + err);

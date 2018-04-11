@@ -29,7 +29,8 @@
           <div class="book center-block row">
             <div class="book-text col-sm-7 col-md-9">
               <!--To Single Book Page-->
-              <router-link :to="{ path: 'book', query: { id: book.id }}">
+              <!--The title needs to be sent as sometimes an array containing many books sharing the same ID is returned. It will be used to cross reference this book displayed here.-->
+              <router-link :to="{ path: 'book', query: { id: book.id, title: book.volumeInfo.title }}">
                 <div class="book-title">{{book.volumeInfo.title}}</div>
               </router-link>
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
@@ -41,7 +42,7 @@
             </div>
             <!--To Single Book Page-->
             <div class="book-image col-sm-5 col-md-3">
-              <router-link :to="{ path: 'book', query: { id: book.id }}">
+              <router-link :to="{ path: 'book', query: { id: book.id, title: book.volumeInfo.title }}">
                 <img v-bind:src="book.volumeInfo.imageLinks.smallThumbnail" alt="book thumbnail">
               </router-link>
             </div>

@@ -9,7 +9,8 @@
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
       <div class="book-publisher-and-date-and-pages"> {{book.volumeInfo.publisher}}, {{book.volumeInfo.publishedDate.match(/\d{4}/).toString()}} - {{book.volumeInfo.pageCount}} pages.</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-      <p class="book-description">{{removeHTMLTagsFromDetailedDescription}}</p>
+      <!--<p class="book-description">{{bookDetailed.description}}</p>-->
+      <p class="book-description">{{removeHTMLTagsFromDetailedDescriptionIfPresent}}</p>
       <div class="book-isbn" v-for="isbnInformation in bookDetailed.industryIdentifiers">
         <span v-for="isbnType in isbnInformation.type">{{isbnType.replace("_", " ")}}</span>:
         <span v-for="isbn in isbnInformation.identifier">{{isbn}}</span>
@@ -79,11 +80,25 @@
     },
     computed: {
       // This is needed because some detailed descriptions contain HTML. - https://vuejs.org/v2/guide/computed.html & https://stackoverflow.com/questions/37623982/how-to-remove-html-tags-from-json-output
-      removeHTMLTagsFromDetailedDescription: function () {
-        return this.bookDetailed.description.replace(/<[^>]+>/gm, '')
-          .replace(/&nbsp;/g, ' ')
-          .replace(/&rsquo;/, '\'')
-          .replace(/(&ldquo;)|(&rdquo;)/g, '"')
+      removeHTMLTagsFromDetailedDescriptionIfPresent: function () {
+        // The patterns are needed because some text won't return when passed into this function.
+        let pattern1 = /<[^>]+>/gm
+        let pattern2 = /&nbsp;/g
+        let pattern3 = /&rsquo;/
+        let pattern4 = /(&ldquo;)|(&rdquo;)/g
+        if (pattern1.test(this.bookDetailed.description) ||
+          pattern2.test(this.bookDetailed.description) ||
+          pattern3.test(this.bookDetailed.description) ||
+          pattern4.test(this.bookDetailed.description)) {
+          return this.bookDetailed.description.replace(/<[^>]+>/gm, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&rsquo;/, '\'')
+            .replace(/(&ldquo;)|(&rdquo;)/g, '"')
+            // Some text has no spaces after fullstops when the HTML is removed. The positive lookahead for capital letters is needed to stop '...' becoming '. . .' or '7.62' becoming '7 .62'
+            .replace(/\.(?=\s*[A-Z])/g, '\. ')
+        } else {
+          return this.bookDetailed.description
+        }
       }
     }
   }

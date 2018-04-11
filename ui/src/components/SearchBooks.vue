@@ -34,6 +34,10 @@
               </router-link>
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
               <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
+              <!--
+              This should be a short description, not always the case though... :(
+              <div class="book-categories">{{book.volumeInfo.description}}</div>
+              -->
             </div>
             <!--To Single Book Page-->
             <div class="book-image col-sm-5 col-md-3">

@@ -9,8 +9,11 @@
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
       <div class="book-publisher-and-date-and-pages"> {{book.volumeInfo.publisher}}, {{book.volumeInfo.publishedDate.match(/\d{4}/).toString()}} - {{book.volumeInfo.pageCount}} pages.</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-      <p class="book-description">{{book.volumeInfo.description}}</p>
-      <div class="book-isbns" v-for="isbn in book.volumeInfo.industryIdentifiers">{{isbn}}</div>
+      <p class="book-description">{{removeHTMLTagsFromDetailedDescription}}</p>
+      <div class="book-isbn" v-for="isbnInformation in bookDetailed.industryIdentifiers">
+        <span v-for="isbnType in isbnInformation.type">{{isbnType.replace("_", " ")}}</span>:
+        <span v-for="isbn in isbnInformation.identifier">{{isbn}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -23,8 +26,8 @@
     data () {
       return {
         bookID: this.$route.query.id,
-        book: []
-
+        book: [],
+        bookDetailed: []
       }
     },
     methods: {
@@ -45,14 +48,42 @@
             console.log(error)
             this.$router.push('book-not-found')
           })
+      },
+      searchBookDetailed: function () {
+        this.loading = true
+        axios.get('https://www.googleapis.com/books/v1/volumes/' + this.bookID)
+          .then((response) => {
+            this.loading = false
+            // check if it has returned a valid book
+            if (response.data.totalItems === 0) {
+              this.$router.push('book-not-found')
+            } else {
+              this.bookDetailed = response.data.volumeInfo
+              console.log(response.data.volumeInfo)
+            }
+          }, (error) => {
+            this.loading = false
+            console.log('searchBookDetailed error: ' + error)
+            this.$router.push('book-not-found')
+          })
       }
     },
     created: function () {
       // Checks if a bookID has been sent, if not, user is sent to error page
       if (typeof this.$route.query.id !== 'undefined') {
         this.searchBooks()
+        this.searchBookDetailed()
       } else {
         this.$router.push('book-not-found')
+      }
+    },
+    computed: {
+      // This is needed because some detailed descriptions contain HTML. - https://vuejs.org/v2/guide/computed.html & https://stackoverflow.com/questions/37623982/how-to-remove-html-tags-from-json-output
+      removeHTMLTagsFromDetailedDescription: function () {
+        return this.bookDetailed.description.replace(/<[^>]+>/gm, '')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&rsquo;/, '\'')
+          .replace(/(&ldquo;)|(&rdquo;)/g, '"')
       }
     }
   }
@@ -76,7 +107,7 @@
     font-size: larger;
     color: #5f5b5f;
   }
-  .book-categories, .book-google-rating, .book-publisher-and-date-and-pages, book-isbns {
+  .book-categories, .book-google-rating, .book-publisher-and-date-and-pages, .book-isbn {
     padding-top: 10px;
     color: #8a848a;
   }

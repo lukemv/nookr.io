@@ -1,5 +1,12 @@
  <template>
-   <router-link :to="{ path: 'book', query: { id: book.isbn10 }}">
+   <!--Title is needed here so we can get around the issue of books having the same ID-->
+   <router-link :to="{
+     path: 'book',
+     query: {
+       id: book.isbn10,
+       title: book.title
+     }
+   }">
     <div class="book-thumb" >
       <img class="book-img" v-bind:src="book.coverImage" alt="Book Cover">
       <div class="book-title"> {{book.title}}</div>

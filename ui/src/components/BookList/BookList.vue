@@ -27,6 +27,7 @@
           axios.get('https://www.googleapis.com/books/v1/volumes?q=' + isbn10)
             .then((response) => {
               this.loading = false
+              // The same issue will arrive here with books that share the same ID - see https://www.googleapis.com/books/v1/volumes?q=UNtUPwAACAAJ as an example
               book['title'] = (response.data.items[0].volumeInfo.title)
               book['coverImage'] = (response.data.items[0].volumeInfo.imageLinks.thumbnail)
               bookshelf.push({title: book.title, coverImage: book.coverImage, isbn10: isbn10})
@@ -39,7 +40,7 @@
       },
       created: function () {
         // Populate  Recommended list
-        this.getBook(this.recommended, '1781100233')
+        this.getBook(this.recommended, 'wHlDzHnt6x0C') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
         this.getBook(this.recommended, '39iYWTb6n6cC')
         // this.getBook(this.recommended, 'nkalO3OsoeMC')
         // this.getBook(this.recommended, 'aWZzLPhY4o0C')

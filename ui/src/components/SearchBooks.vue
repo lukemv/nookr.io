@@ -30,7 +30,13 @@
             <div class="book-text col-sm-7 col-md-9">
               <!--To Single Book Page-->
               <!--The title needs to be sent as sometimes an array containing many books sharing the same ID is returned. It will be used to cross reference this book displayed here.-->
-              <router-link :to="{ path: 'book', query: { id: book.id, title: book.volumeInfo.title }}">
+              <router-link :to="{
+                path: 'book',
+                query: {
+                  id: book.id,
+                  title: book.volumeInfo.title
+                }
+              }">
                 <div class="book-title">{{book.volumeInfo.title}}</div>
               </router-link>
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>

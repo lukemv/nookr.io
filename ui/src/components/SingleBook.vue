@@ -104,8 +104,13 @@
             .replace(/&nbsp;/g, ' ')
             .replace(/&rsquo;/, '\'')
             .replace(/(&ldquo;)|(&rdquo;)/g, '"')
-            // Some text has no spaces after fullstops when the HTML is removed. The positive lookahead for capital letters is needed to stop '...' becoming '. . .' or '7.62' becoming '7 .62'
-            .replace(/\.(?=\s*[A-Z])/g, '\. ')
+            // Some text has no spaces after fullstops or quotes when the HTML is removed. The positive lookahead for capital letters is needed to stop '...' becoming '. . .' or '7.62' becoming '7 .62' etc
+            // The problem here is we fix one issue and create another... need to decide if we should cleanse data or not.
+            /* .replace(/\.(?=\s*[A-Z])/g, '\. ')
+            .replace(/"'|"\.'/g, '\'')
+            .replace(/'(?=[A-Z])/g, '\. \'')
+            .replace(/"(?=[A-Z])/g, '\. "')
+            .replace(/^. '|^. "/, '\'') */
         } else {
           return this.bookDetailed.description
         }

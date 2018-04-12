@@ -1,45 +1,28 @@
 <template>
   <div id="book-page" class="row">
-    <div class="book-image col-xs-12 col-sm-3">
-      <img v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
-    </div>
+    
     <div class="col-xs-12 col-sm-9">
       <div class="book-title">{{book.volumeInfo.title}}</div>
-      <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
-      <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-      <p class="book-description">{{book.volumeInfo.description}}</p>
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-
   export default {
-    name: 'single-book',
+    name: 'book',
     data () {
       return {
         bookID: this.$route.query.id,
         book: []
-
       }
     },
     methods: {
       searchBooks: function () {
-        this.loading = true
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.bookID)
-          .then((response) => {
-            this.loading = false
-            // check if it has returned a valid book
-            if (response.data.totalItems === 0) {
-              this.$router.push('book-not-found')
-            } else {
-              this.book = response.data.items[0]
-            }
+        this.$http.get(`${this.$globals.api}/singleBook?id=` + this.bookID)
+          .then((res) => {
+            this.book = res.body.payload.book
           }, (error) => {
-            this.loading = false
             console.log(error)
-            this.$router.push('book-not-found')
           })
       }
     },

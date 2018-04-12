@@ -10,5 +10,15 @@ module.exports = {
       });
 
     });
+  },
+  googleDetailedVolumeSearch: (query) => {
+    const url = `https://www.googleapis.com/books/v1/volumes/${query}`;
+
+    return new Promise((resolve, reject) => {
+      axios.get(url).then((res) => {
+        resolve(res.data);
+      });
+
+    });
   }
 }

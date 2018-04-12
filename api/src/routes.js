@@ -118,12 +118,18 @@ module.exports = function(app, passport, session) {
     libnook.googleVolumeSearch(q).then((volumes) => {
 
       var bookList = [];
-
+      
       // loop through the items and make a Book and add it to the bookList
       for (var i =0; i < volumes.items.length; i++) {
         var volume = volumes.items[i];
         
-        book = new Book(volume);
+        // Can we do a googleDetailedVolumeSearch and get a single book result that has more details? Something like:
+        // googleDetailedVolumeSearch(volume.id).then((detailedVolume) => {
+        //  var book = new Book(detailedVolume);
+        //  bookList.push(book)
+        // })
+
+        var book = new Book(volume);
         bookList.push(book)
       }
     

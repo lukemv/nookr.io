@@ -12,13 +12,21 @@
           v-on:click="toggleFilter()">{{ showHide }} Filter Options
       </button>
       <div class="accordion" v-if="showFilter === true">
+        <div v-if="errors.length" class="alert alert-warning" role="alert">
+          <p>
+            <b>Please correct the following error(s):</b>
+            <ul>
+              <li v-for="error in errors">{{ error }}</li>
+            </ul>
+          </p>
+        </div>
       <p>
         <label for="filterByDate">Best Sellers list at date:</label><br>
         <input @keyup.enter="filterBooks()"
                 v-model="filterDate"
                 placeholder="YYYY-MM-DD"
                 :disabled="isLoading"
-                class="mb-2 mr-sm-2 pt-1 col-sm-4"
+                class="mb-2 mr-sm-2 pt-1 col-sm-7"
                 id="filterByDate"
                 v-focus>
       </p>
@@ -28,13 +36,14 @@
                 v-model="weeksOnList"
                 placeholder="1"
                 :disabled="isLoading"
-                class="mb-2 mr-sm-2 pt-1 col-sm-4"
+                class="mb-2 mr-sm-2 pt-1 col-sm-7"
                 id="filterByWeeks"
+                type="number"
                 v-focus>
       </p>
       <button
           type="button"
-          class="btn btn-primary mb-2 mr-sm-2 col-sm-4"
+          class="btn btn-primary mb-2 mr-sm-2 col-sm-7"
           :disabled="isLoading"
           v-on:click="filterBooks()">Filter
       </button>
@@ -63,6 +72,7 @@
     data () {
       return {
         books: [],
+        errors: [],
         isLoading: false,
         filterDate: '',
         weeksOnList: '',
@@ -89,7 +99,13 @@
     methods: {
       filterBooks: function () {
         this.isLoading = true
-        if (this.filterDate) {
+        if (this.filterDate && !this.weeksOnList) {
+          this.errors = []
+          if (!this.validDate(this.filterDate)) {
+            this.errors.push('Please enter a valid date (YYYY-MM-DD)')
+            this.isLoading = false
+            return
+          }
           axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
             params: {
               'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
@@ -105,7 +121,13 @@
               console.log(error)
             })
         }
-        if (this.weeksOnList) {
+        if (this.weeksOnList && !this.filterDate) {
+          this.errors = []
+          if (this.weeksOnList < 0) {
+            this.errors.push('Please enter a valid number (weeks on best sellers list must be zero or greater)')
+            this.isLoading = false
+            return
+          }
           axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
             params: {
               'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
@@ -122,6 +144,19 @@
             })
         }
         if (this.weeksOnList && this.filterDate) {
+          this.errors = []
+          if (!this.validDate(this.filterDate)) {
+            this.errors.push('Please enter a valid date (YYYY-MM-DD)')
+            this.isLoading = false
+          }
+          if (this.weeksOnList < 0) {
+            this.errors.push('Please enter a valid number (weeks on best sellers list must be zero or greater)')
+            this.isLoading = false
+          }
+          if (this.errors.length) {
+            return
+          }
+
           axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
             params: {
               'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
@@ -146,6 +181,10 @@
         } else {
           this.showHide = 'Show'
         }
+      },
+      validDate: function (filterDate) {
+        var re = /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))/
+        return re.test(filterDate)
       }
     },
     // https://vuejs.org/v2/guide/custom-directive.html

@@ -12,21 +12,32 @@
           v-on:click="toggleFilter()">{{ showHide }} Filter Options
       </button>
       <div class="accordion" v-if="showFilter === true">
-        <label for="filterByDate">Filter by date the best sellers list was
-          published on NYTimes.com</label> 
+      <p>
+        <label for="filterByDate">Best Sellers list at date:</label><br>
         <input @keyup.enter="filterBooks()"
                 v-model="filterDate"
                 placeholder="YYYY-MM-DD"
                 :disabled="isLoading"
-                class="mb-2 mr-sm-2 pt-1"
+                class="mb-2 mr-sm-2 pt-1 col-sm-4"
                 id="filterByDate"
                 v-focus>
-        <button
-            type="button"
-            class="btn btn-primary mb-2 mr-sm-2"
-            :disabled="isLoading"
-            v-on:click="filterBooks()">Filter
-        </button>
+      </p>
+      <p>
+        <label for="filterByWeeks">Weeks on Best Sellers list: </label><br>
+        <input @keyup.enter="filterBooks()"
+                v-model="weeksOnList"
+                placeholder="1"
+                :disabled="isLoading"
+                class="mb-2 mr-sm-2 pt-1 col-sm-4"
+                id="filterByWeeks"
+                v-focus>
+      </p>
+      <button
+          type="button"
+          class="btn btn-primary mb-2 mr-sm-2 col-sm-4"
+          :disabled="isLoading"
+          v-on:click="filterBooks()">Filter
+      </button>
       </div>
     </form>
     </div>
@@ -37,6 +48,7 @@
               <div class="book-title">{{book.book_details[0].title}}</div>
               <div class="book-authors">{{book.book_details[0].author}}</div>
           </div>
+          <div class="book-weeks float-md-right col-sm-3">Weeks on list: {{book.weeks_on_list}}</div>
         </div>
       </div>
     </div>
@@ -53,6 +65,7 @@
         books: [],
         isLoading: false,
         filterDate: '',
+        weeksOnList: '',
         showFilter: false,
         showHide: 'Show'
       }
@@ -76,20 +89,55 @@
     methods: {
       filterBooks: function () {
         this.isLoading = true
-        axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
-          params: {
-            'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
-            'list': 'combined-print-and-e-book-fiction',
-            'published-date': this.filterDate
-          }
-        })
-          .then((response) => {
-            this.isLoading = false
-            this.books = response.data.results
-          }, (error) => {
-            this.isLoading = false
-            console.log(error)
+        if (this.filterDate) {
+          axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
+            params: {
+              'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
+              'list': 'combined-print-and-e-book-fiction',
+              'published-date': this.filterDate
+            }
           })
+            .then((response) => {
+              this.isLoading = false
+              this.books = response.data.results
+            }, (error) => {
+              this.isLoading = false
+              console.log(error)
+            })
+        }
+        if (this.weeksOnList) {
+          axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
+            params: {
+              'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
+              'list': 'combined-print-and-e-book-fiction',
+              'weeks-on-list': this.weeksOnList
+            }
+          })
+            .then((response) => {
+              this.isLoading = false
+              this.books = response.data.results
+            }, (error) => {
+              this.isLoading = false
+              console.log(error)
+            })
+        }
+        if (this.weeksOnList && this.filterDate) {
+          axios.get('https://api.nytimes.com/svc/books/v3/lists.json', {
+            params: {
+              'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
+              'list': 'combined-print-and-e-book-fiction',
+              'weeks-on-list': this.weeksOnList,
+              'published-date': this.filterDate
+            }
+          })
+            .then((response) => {
+              this.isLoading = false
+              this.books = response.data.results
+            }, (error) => {
+              this.isLoading = false
+              console.log(error)
+            })
+        }
       },
       toggleFilter: function () {
         this.showFilter = !this.showFilter
@@ -131,6 +179,10 @@
   .book-authors{
     font-size: larger;
     color: #5f5b5f;
+  }
+  .book-weeks{
+    font-size: smaller;
+    float:right;
   }
   .container{
     margin-top: 40px;

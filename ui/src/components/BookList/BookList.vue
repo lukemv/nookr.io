@@ -42,20 +42,28 @@
         // Populate  Recommended list
         this.getBook(this.recommended, 'wHlDzHnt6x0C') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
         this.getBook(this.recommended, '39iYWTb6n6cC')
-        // this.getBook(this.recommended, 'nkalO3OsoeMC')
-        // this.getBook(this.recommended, 'aWZzLPhY4o0C')
-        // this.getBook(this.recommended, 'DC4mYbY6bSwC')
+        this.getBook(this.recommended, 'nkalO3OsoeMC')
+        this.getBook(this.recommended, 'aWZzLPhY4o0C')
+        this.getBook(this.recommended, 'DC4mYbY6bSwC')
+        this.getBook(this.recommended, '39iYWTb6n6cC')
+        this.getBook(this.recommended, 'nkalO3OsoeMC')
+        this.getBook(this.recommended, 'aWZzLPhY4o0C')
+        this.getBook(this.recommended, 'DC4mYbY6bSwC')
+        this.getBook(this.recommended, '39iYWTb6n6cC')
+        this.getBook(this.recommended, 'nkalO3OsoeMC')
+        this.getBook(this.recommended, 'aWZzLPhY4o0C')
+        this.getBook(this.recommended, 'DC4mYbY6bSwC')
 
         // populate Trending List
-        this.getBook(this.trending, 'ar4j52mEdLoC')
-        this.getBook(this.trending, '6pImDwAAQBAJ')
+        // this.getBook(this.trending, 'ar4j52mEdLoC')
+        // this.getBook(this.trending, '6pImDwAAQBAJ')
         // this.getBook(this.trending, 'TiFSMQAACAAJ')
         // this.getBook(this.trending, 'XZKvDgAAQBAJ')
         // this.getBook(this.trending, 'uUNKAAAAQBAJ')
 
         // populate new releases list
-        this.getBook(this.newRelease, 'J8ahqXjUhAAC')
-        this.getBook(this.newRelease, 'X_ZDtAEACAAJ')
+        // this.getBook(this.newRelease, 'J8ahqXjUhAAC')
+        // this.getBook(this.newRelease, 'X_ZDtAEACAAJ')
         // this.getBook(this.newRelease, 'YJFRDwAAQBAJ')
         // this.getBook(this.newRelease, 'vgsyDwAAQBAJ')
         // this.getBook(this.newRelease, 'H8YrDwAAQBAJ')

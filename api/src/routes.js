@@ -2,10 +2,14 @@ const payload = require('./payload');
 const config = require('./config');
 const jwt = require('express-jwt');
 const User = require('./models/user');
+const axios = require('axios');
+const moment = require('moment');
+var mongoose = require('mongoose');
+const NYBook = require('./models/nyBook');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
-  const authWhitelist = {path: ['/health', '/register', '/login']};
+  const authWhitelist = {path: ['/health', '/register', '/login', '/populateNY']};
   const isRevokedCallback = (req, payload, done) => {
     const issuer = payload.iss;
     const userId = payload.cid;
@@ -98,5 +102,40 @@ module.exports = function(app, passport, session) {
         health: 'ok'
       }
     }));
-  })
+  });
+  app.get('/populateNY', (req, res, next) => {
+    console.log('running...')
+    mongoose.connection.db.dropCollection('nybooks', function(err, result) {
+      if (err) return console.error(err)
+    });
+    var d = moment()
+    var timer = setInterval(function () {
+      axios.get('https://api.nytimes.com/svc/books/v3/lists//.json', {
+          params: {
+            'api-key': '29ff6820315e44e5b7b9060c0aa39d52',
+            'list': 'combined-print-and-e-book-fiction',
+            'published-date': d.format('YYYY-MM-DD')
+          }
+        })
+        .then((response) => {
+          for (let i=0; i<response.data.results.length; i++) {
+            console.log(response.data.results[i].book_details[0].title)
+            var details = new NYBook({
+              title: response.data.results[i].book_details[0].title,
+              author: response.data.results[i].book_details[0].author,
+              listDate: response.data.results[i].published_date,
+              ISBN: response.data.results[i].book_details[0].primary_isbn13
+            });
+            details.save(function (err, details) {
+              if (err) return console.error(err)
+            });
+          }
+        }, (error) => {
+          console.log(error)
+        })
+        d.subtract(7, 'days')
+        if (d.isBefore('2013-01-01')) clearInterval(timer)
+    }, 300);
+    console.log('done!')
+  });
 };

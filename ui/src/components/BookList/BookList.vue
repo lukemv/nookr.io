@@ -1,64 +1,86 @@
 <template>
   <div class="book-list">
-    <book-shelf v-bind:books="recommended" v-bind:shelf-title="'Just For You'"></book-shelf>
+    <book-shelf v-bind:books="recommended" v-bind:shelf-title="'Recommended'"></book-shelf>
     <book-shelf v-bind:books="trending" v-bind:shelf-title="'Trending'"></book-shelf>
-    <book-shelf v-bind:books="newRelease" v-bind:shelf-title="'New Releases'"></book-shelf>
+    <book-shelf v-bind:books="bestSellers" v-bind:shelf-title="'New York Best Sellers'"></book-shelf>
   </div>
 </template>
 
 <script>
     import BookShelf from './BookShelf'
-    import axios from 'axios'
 
     export default {
       components: {BookShelf},
       name: 'book-list',
       data () {
         return {
+          // Recommended, Trending, and bestsellers are all bookshelves, they need to be populated with books in the following format:
+          //    bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID})
+          //  Each bookshelf takes at least 1 book, handles long lists automatically by provided a 'load more' button
           recommended: [],
           trending: [],
-          newRelease: []
+          bestSellers: [],
+          // Trending books is a list of books taken from the DB based on the api/trending results. The TITLE, COVERIMAGE, and BOOKID are used from
+          // this list to pass into the 'trending' bookshelf
+          trendingBooks: []
         }
       },
       methods: {
-        getBook: function (bookshelf, bookID, isbn10, isbn13) {
+        // Gets a single book by the bookID, and places it in the passed bookshelf. Call this function in a loop with all books that you want to
+        // add to a particular bookshelf
+        getBook: function (bookshelf, bookID) {
           var book = {title: '', coverImage: ''}
           this.loading = true
-          axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn' + isbn10)
+          // Hit our API and get a single book object.
+          this.$http.get(`${this.$globals.api}/singleBook?id=` + bookID)
             .then((response) => {
               this.loading = false
-              // The same issue will arrive here with books that share the same ID - see https://www.googleapis.com/books/v1/volumes?q=UNtUPwAACAAJ as an example
-              book['title'] = (response.data.items[0].volumeInfo.title)
-              book['coverImage'] = (response.data.items[0].volumeInfo.imageLinks.thumbnail)
-              bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID, isbn10: isbn10, isbn13: isbn13})
-              console.log(book.image)
+              book['title'] = (response.body.payload.book.googleInfo.volumeInfo.title)
+              book['coverImage'] = (response.body.payload.book.googleInfo.volumeInfo.imageLinks.thumbnail)
+              // Place the single book into the desired bookshelf
+              bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID})
             }, (error) => {
               this.loading = false
               console.log(error)
             })
+        },
+        // Gets id's of all trending books from api, sends them to getList method to display them to view
+        getTrendingBooks: function (response) {
+          this.trendingBooks = (response)
+          return response
         }
       },
       created: function () {
-        // Populate  Recommended list
-        this.getBook(this.recommended, 'wHlDzHnt6x0C', '1781100233', '9781781100233')
-        this.getBook(this.recommended, '39iYWTb6n6cC', '1781100217', '9781781100219')
-        // this.getBook(this.recommended, 'nkalO3OsoeMC')
-        // this.getBook(this.recommended, 'aWZzLPhY4o0C')
-        // this.getBook(this.recommended, 'DC4mYbY6bSwC')
-
-        // populate Trending List
-        this.getBook(this.trending, '5X138LorBnQC', '0857895265', '9780857895264')
-        this.getBook(this.trending, '6PImDwAAQBAJ', '1526704110', '9781526704115')
-        // this.getBook(this.trending, 'TiFSMQAACAAJ')
-        // this.getBook(this.trending, 'XZKvDgAAQBAJ')
-        // this.getBook(this.trending, 'uUNKAAAAQBAJ')
-
-        // populate new releases list
-        this.getBook(this.newRelease, '4zugGMReN3cC', '0099560437', '9780099560432')
-        this.getBook(this.newRelease, 'x_zdtAEACAAJ', '1910230405', '9781910230404')
-        // this.getBook(this.newRelease, 'YJFRDwAAQBAJ')
-        // this.getBook(this.newRelease, 'vgsyDwAAQBAJ')
-        // this.getBook(this.newRelease, 'H8YrDwAAQBAJ')
+        // Hard coded Recommended list.
+        this.getBook(this.recommended, 'vWCqCVvluioC')
+        this.getBook(this.recommended, 'ttuJAgAAQBAJ')
+        // Populate  trending list, currently selects max 12 random trending books each time
+        this.$http.get(`${this.$globals.api}/trending`)
+          .then(this.getTrendingBooks)
+          .then((output) => {
+            return this.$http.get(`${this.$globals.api}/trending`)
+          })
+          .then((output) => {
+            // Randomly selects a number of trending books, TODO, sort by date or some other variable
+            this.trendingBooks = output.body.payload.bookList
+            var trendingQuantity = Math.min(12, this.trendingBooks.length)
+            // Get random numbers for selectin withing trendingBooks, cant be more than the amound of books in trendingBooks
+            var randomNumbers = []
+            while (randomNumbers.length < trendingQuantity) {
+              var rand = Math.floor(Math.random() * trendingQuantity)
+              if (!randomNumbers.includes(rand)) {
+                randomNumbers.push(rand)
+              }
+            }
+            for (var i = 0; i < trendingQuantity; i++) {
+              // Random reference to a trendingBook
+              var randomReference = randomNumbers[i]
+              this.getBook(this.trending, this.trendingBooks[randomReference].id)
+            }
+          })
+        // NY Times List goes here (bestSellers), currently hard coded. TODO: Load books in from API and loop into the bookshelves
+        this.getBook(this.bestSellers, 'I6_ofHiH69sC')
+        this.getBook(this.bestSellers, 'TpY-IOUsjrMC')
       }
     }
 </script>

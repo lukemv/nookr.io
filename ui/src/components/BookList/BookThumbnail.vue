@@ -1,4 +1,4 @@
- <template>
+ <template class="col-xs-3">
    <!--Title is needed here so we can get around the issue of books having the same ID-->
    <router-link :to="{
      path: 'book',
@@ -9,7 +9,7 @@
        isbn13: book.isbn13,
      }
    }">
-    <div class="book-thumb" >
+    <div class="book-thumb col-3" >
       <img class="book-img" v-bind:src="book.coverImage" alt="Book Cover">
       <div class="book-title"> {{book.title}}</div>
     </div>

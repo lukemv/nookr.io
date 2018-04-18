@@ -1,7 +1,7 @@
 <template>
     <div id="book-shelf">
       <div class="recommendation">
-        <div class="recommendation-title">{{shelfTitle}}</div>
+        <h3>{{shelfTitle}}</h3>
         <hr>
         <div class="book-thumbnail-container row">
           

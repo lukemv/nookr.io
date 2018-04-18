@@ -21,7 +21,7 @@
         }
       },
       methods: {
-        getBook: function (bookshelf, isbn10) {
+        getBook: function (bookshelf, bookID, isbn10, isbn13) {
           var book = {title: '', coverImage: ''}
           this.loading = true
           this.$http.get(`${this.$globals.api}/singleBook?id=` + isbn10)
@@ -50,9 +50,9 @@
         }
       },
       created: function () {
-        // Populate  Recommended list
         // this.getBook(this.recommended, 'UdDlN_35JZIC') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
         // this.getBook(this.recommended, '7HgwCgAAQBAJ')
+        // Populate  trending list
         this.$http.get(`${this.$globals.api}/trending`)
           .then(this.getTrendingBooks)
           .then((output) => {
@@ -71,7 +71,6 @@
         // this.getBook(this.trending, 'TiFSMQAACAAJ')
         // this.getBook(this.trending, 'XZKvDgAAQBAJ')
         // this.getBook(this.trending, 'uUNKAAAAQBAJ')
-
         // populate new releases list
         // this.getBook(this.newRelease, 'J8ahqXjUhAAC')
         // this.getBook(this.newRelease, 'X_ZDtAEACAAJ')

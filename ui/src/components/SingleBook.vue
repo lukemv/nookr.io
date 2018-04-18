@@ -26,6 +26,8 @@
     data () {
       return {
         bookID: this.$route.query.id,
+        isbn10: this.$route.query.isbn10,
+        isbn13: this.$route.query.isbn13,
         book: [],
         nookrInfo: []
       }

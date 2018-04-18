@@ -127,7 +127,6 @@ module.exports = function(app, passport, session) {
       if (err) {
         res.status(404).send(payload('info', {message: 'book not found'}));
       }
-      console.log(book);
       res.status(200).send(payload('book', {book}));
     });
   });
@@ -173,5 +172,4 @@ module.exports = function(app, passport, session) {
 
     });
   });
-
 };

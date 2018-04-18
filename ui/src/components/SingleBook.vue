@@ -34,7 +34,6 @@
       searchBooks: function () {
         this.$http.get(`${this.$globals.api}/singleBook?id=` + this.bookID)
           .then((res) => {
-            console.log(res.body.payload)
             this.book = res.body.payload.book.googleInfo
             this.nookrInfo = res.body.payload.book.nookrInfo
           }, (error) => {

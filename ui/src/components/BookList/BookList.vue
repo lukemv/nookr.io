@@ -32,36 +32,39 @@
               console.log(response.body.payload)
               book['title'] = (response.body.payload.book.googleInfo.volumeInfo.title)
               book['coverImage'] = (response.body.payload.book.googleInfo.volumeInfo.imageLinks.thumbnail)
-              bookshelf.push({title: book.title, coverImage: book.googleInfo.coverImage, isbn10: isbn10})
+              bookshelf.push({title: book.title, coverImage: book.coverImage, isbn10: isbn10})
             }, (error) => {
               this.loading = false
               console.log(error)
             })
         },
-        loadBookshelf (bookshelf) {
-          console.log('i is : ')
-          for (var i = 0; i < this.trendingBooks.length; i++) {
-            console.log('i is : ' + i)
-          }
+        loadBookshelf: function (response) {
+          console.log('trending books : ' + this.trendingBooks.length)
+          return response
         },
         // Gets id's of all trending books from api, sends them to getList method to display them to view
-        getTrendingBooks: function () {
-          this.loading = true
-          this.$http.get(`${this.$globals.api}/trending`)
-            .then((response) => {
-              this.loading = false
-              this.trendingBooks = (response.body.payload.bookList)
-            }, (error) => {
-              this.loading = false
-              console.log(error)
-            })
+        getTrendingBooks: function (response) {
+          this.trendingBooks = (response)
+          console.log(this.trendingBooks)
+          return response
         }
       },
       created: function () {
         // Populate  Recommended list
         // this.getBook(this.recommended, 'UdDlN_35JZIC') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
         // this.getBook(this.recommended, '7HgwCgAAQBAJ')
-        this.getTrendingBooks()
+        this.$http.get(`${this.$globals.api}/trending`)
+          .then(this.getTrendingBooks)
+          .then((output) => {
+            return this.$http.get(`${this.$globals.api}/trending`)
+          })
+          .then(self.loadBookShelf)
+          .then((output) => {
+            this.trendingBooks = output.body.payload.bookList
+            for (var i = 0; i < this.trendingBooks.length; i++) {
+              this.getBook(this.trending, this.trendingBooks[i].id)
+            }
+          })
         // populate Trending List
         // this.getBook(this.trending, 'ar4j52mEdLoC')
         // this.getBook(this.trending, '6pImDwAAQBAJ')

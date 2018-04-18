@@ -62,7 +62,7 @@ function Worker(week) {
   log.info(`Processing Week: ${week}`)
 
   if (week.isBefore(stopWeek)) {
-    log.info(`Processing Completed: ${week} is after ${stopWeek}`);
+    log.info(`Processing Completed: ${week} is earlier than ${stopWeek}`);
     return;
   }
 
@@ -90,7 +90,7 @@ function Worker(week) {
     log.error(error)
     log.info(`Sleeping for ${sleepSeconds} seconds`);
     sleep.sleep(sleepSeconds);
-    Worker(previousWeek);
+    Worker(week);
   });
 }
 

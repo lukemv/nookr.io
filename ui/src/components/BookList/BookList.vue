@@ -8,7 +8,6 @@
 
 <script>
     import BookShelf from './BookShelf'
-    import axios from 'axios'
 
     export default {
       components: {BookShelf},
@@ -17,21 +16,41 @@
         return {
           recommended: [],
           trending: [],
-          newRelease: []
+          newRelease: [],
+          trendingBooks: []
         }
       },
       methods: {
         getBook: function (bookshelf, isbn10) {
           var book = {title: '', coverImage: ''}
           this.loading = true
-          axios.get('https://www.googleapis.com/books/v1/volumes?q=' + isbn10)
+          this.$http.get(`${this.$globals.api}/singleBook?id=` + isbn10)
             .then((response) => {
               this.loading = false
               // The same issue will arrive here with books that share the same ID - see https://www.googleapis.com/books/v1/volumes?q=UNtUPwAACAAJ as an example
-              book['title'] = (response.data.items[0].volumeInfo.title)
-              book['coverImage'] = (response.data.items[0].volumeInfo.imageLinks.thumbnail)
-              bookshelf.push({title: book.title, coverImage: book.coverImage, isbn10: isbn10})
-              console.log(book.image)
+              // console.log(response.body.payload.book)
+              console.log(response.body.payload)
+              book['title'] = (response.body.payload.book.googleInfo.volumeInfo.title)
+              book['coverImage'] = (response.body.payload.book.googleInfo.volumeInfo.imageLinks.thumbnail)
+              bookshelf.push({title: book.title, coverImage: book.googleInfo.coverImage, isbn10: isbn10})
+            }, (error) => {
+              this.loading = false
+              console.log(error)
+            })
+        },
+        loadBookshelf (bookshelf) {
+          console.log('i is : ')
+          for (var i = 0; i < this.trendingBooks.length; i++) {
+            console.log('i is : ' + i)
+          }
+        },
+        // Gets id's of all trending books from api, sends them to getList method to display them to view
+        getTrendingBooks: function () {
+          this.loading = true
+          this.$http.get(`${this.$globals.api}/trending`)
+            .then((response) => {
+              this.loading = false
+              this.trendingBooks = (response.body.payload.bookList)
             }, (error) => {
               this.loading = false
               console.log(error)
@@ -40,20 +59,9 @@
       },
       created: function () {
         // Populate  Recommended list
-        this.getBook(this.recommended, 'wHlDzHnt6x0C') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
-        this.getBook(this.recommended, '39iYWTb6n6cC')
-        this.getBook(this.recommended, 'nkalO3OsoeMC')
-        this.getBook(this.recommended, 'aWZzLPhY4o0C')
-        this.getBook(this.recommended, 'DC4mYbY6bSwC')
-        this.getBook(this.recommended, '39iYWTb6n6cC')
-        this.getBook(this.recommended, 'nkalO3OsoeMC')
-        this.getBook(this.recommended, 'aWZzLPhY4o0C')
-        this.getBook(this.recommended, 'DC4mYbY6bSwC')
-        this.getBook(this.recommended, '39iYWTb6n6cC')
-        this.getBook(this.recommended, 'nkalO3OsoeMC')
-        this.getBook(this.recommended, 'aWZzLPhY4o0C')
-        this.getBook(this.recommended, 'DC4mYbY6bSwC')
-
+        // this.getBook(this.recommended, 'UdDlN_35JZIC') // Changed from isbn 1781100233 to ID, otherwise the book view breaks since we don't search on isbn yet.
+        // this.getBook(this.recommended, '7HgwCgAAQBAJ')
+        this.getTrendingBooks()
         // populate Trending List
         // this.getBook(this.trending, 'ar4j52mEdLoC')
         // this.getBook(this.trending, '6pImDwAAQBAJ')

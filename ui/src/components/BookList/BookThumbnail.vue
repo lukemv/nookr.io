@@ -3,8 +3,10 @@
    <router-link :to="{
      path: 'book',
      query: {
-       id: book.isbn10,
-       title: book.title
+       id: book.bookID,
+       /* title: book.title, */
+       isbn10: book.isbn10,
+       isbn13: book.isbn13,
      }
    }">
     <div class="book-thumb" >

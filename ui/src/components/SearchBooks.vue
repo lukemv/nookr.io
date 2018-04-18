@@ -33,8 +33,10 @@
               <router-link :to="{
                 path: 'book',
                 query: {
-                  id: book.id,
-                  title: book.volumeInfo.title
+                  /* id: book.id,
+                  title: book.volumeInfo.title, */
+                  isbn10: book.volumeInfo.industryIdentifiers[1].identifier,
+                  isbn13: book.volumeInfo.industryIdentifiers[0].identifier
                 }
               }">
                 <div class="book-title">{{book.volumeInfo.title}}</div>
@@ -45,7 +47,12 @@
             </div>
             <!--To Single Book Page-->
             <div class="book-image col-sm-5 col-md-3">
-              <router-link :to="{ path: 'book', query: { id: book.id, title: book.volumeInfo.title }}">
+              <router-link :to="{ path: 'book', query: {
+                /* id: book.id,
+                title: book.volumeInfo.title, */
+                isbn10: book.volumeInfo.industryIdentifiers[1].identifier,
+                isbn13: book.volumeInfo.industryIdentifiers[0].identifier
+                }}">
                 <img v-bind:src="book.volumeInfo.imageLinks.smallThumbnail" alt="book thumbnail">
               </router-link>
             </div>

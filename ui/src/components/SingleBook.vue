@@ -28,6 +28,8 @@
     data () {
       return {
         bookID: this.$route.query.id,
+        isbn10: this.$route.query.isbn10,
+        isbn13: this.$route.query.isbn13,
         book: [],
         bookDetailed: []
       }
@@ -35,24 +37,19 @@
     methods: {
       searchBooks: function () {
         this.loading = true
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.bookID)
+        /* axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.bookID) */
+        axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn' + this.isbn10)
           .then((response) => {
             this.loading = false
             // check if it has returned a valid book
             if (response.data.totalItems === 0) {
               this.$router.push('book-not-found')
-            // Check for the right book displayed earlier, we need to go through the array and match the correct title to the ID, since multiple books can have the same ID...
             } else if (response.data.totalItems !== 0) {
-              for (let i = 0; i < response.data.totalItems; i++) {
-                // console.log(response.data.items[i])
-                if (response.data.items[i].volumeInfo.title === this.$route.query.title) {
-                  this.book = response.data.items[i]
-                  break
-                }
-              }
-              if (this.book === 'undefined') {
+              console.log(response.data.items[0])
+              this.book = response.data.items[0]
+              /* if (this.book === 'undefined') {
                 this.$router.push('book-not-found')
-              }
+              } */
             }
           }, (error) => {
             this.loading = false
@@ -62,6 +59,7 @@
       },
       searchBookDetailed: function () {
         this.loading = true
+        /* axios.get('https://www.googleapis.com/books/v1/volumes/' + this.bookID) */
         axios.get('https://www.googleapis.com/books/v1/volumes/' + this.bookID)
           .then((response) => {
             this.loading = false
@@ -105,13 +103,6 @@
             .replace(/&rsquo;/, '\'')
             .replace(/(&ldquo;)|(&rdquo;)/g, '"')
             .replace(/\s+/, ' ')
-            // Some text has no spaces after fullstops or quotes when the HTML is removed. The positive lookahead for capital letters is needed to stop '...' becoming '. . .' or '7.62' becoming '7 .62' etc
-            // The problem here is we fix one issue and create another... need to decide if we should cleanse data or not.
-            /* .replace(/\.(?=\s*[A-Z])/g, '\. ')
-            .replace(/"'|"\.'/g, '\'')
-            .replace(/'(?=[A-Z])/g, '\. \'')
-            .replace(/"(?=[A-Z])/g, '\. "')
-            .replace(/^. '|^. "/, '\'') */
         } else {
           return this.bookDetailed.description
         }

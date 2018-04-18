@@ -100,10 +100,11 @@
           pattern2.test(this.bookDetailed.description) ||
           pattern3.test(this.bookDetailed.description) ||
           pattern4.test(this.bookDetailed.description)) {
-          return this.bookDetailed.description.replace(/<[^>]+>/gm, '')
+          return this.bookDetailed.description.replace(/<[^>]+>/gm, ' ')
             .replace(/&nbsp;/g, ' ')
             .replace(/&rsquo;/, '\'')
             .replace(/(&ldquo;)|(&rdquo;)/g, '"')
+            .replace(/\s+/, ' ')
             // Some text has no spaces after fullstops or quotes when the HTML is removed. The positive lookahead for capital letters is needed to stop '...' becoming '. . .' or '7.62' becoming '7 .62' etc
             // The problem here is we fix one issue and create another... need to decide if we should cleanse data or not.
             /* .replace(/\.(?=\s*[A-Z])/g, '\. ')

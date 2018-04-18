@@ -27,8 +27,13 @@
       props: ['books', 'shelfTitle'],
       data () {
         return {
+          // The amount of books to display with each load. Clicking 'load more' displays another quantity of books that match displayQuantity
           displayQuantity: 4,
+          // Number of books refers to the starting amount of books displayed in a bookshelf. This number is updated by the displayQuantity
+          // each time the 'load more' button is clicked
           noOfBooks: 4,
+          // If there are more books in the books array than the noOfBooks, loadBtn is marked as true thus making it visible to click more books.
+          // If there are no more books then the button is disabled again
           loadBtn: false
         }
       }

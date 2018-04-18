@@ -34,21 +34,26 @@
                 path: 'book',
                 query: {
                   id: book.id,
-                  title: book.volumeInfo.title
+                  /* title: book.volumeInfo.title, */
+                  isbn10: book.volumeInfo.industryIdentifiers[1].identifier,
+                  isbn13: book.volumeInfo.industryIdentifiers[0].identifier
                 }
               }">
                 <div class="book-title">{{book.volumeInfo.title}}</div>
               </router-link>
               <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
               <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-              <!--
-              This should be a short description, not always the case though... :(
-              <div class="book-categories">{{book.volumeInfo.description}}</div>
-              -->
+              <!-- This needs to be cleaned as well, could not get it working though :( -->
+              <div class="book-categories">{{book.searchInfo.textSnippet}}</div>
             </div>
             <!--To Single Book Page-->
             <div class="book-image col-sm-5 col-md-3">
-              <router-link :to="{ path: 'book', query: { id: book.id, title: book.volumeInfo.title }}">
+              <router-link :to="{ path: 'book', query: {
+                id: book.id,
+                /* title: book.volumeInfo.title, */
+                isbn10: book.volumeInfo.industryIdentifiers[1].identifier,
+                isbn13: book.volumeInfo.industryIdentifiers[0].identifier
+                }}">
                 <img v-bind:src="book.volumeInfo.imageLinks.smallThumbnail" alt="book thumbnail">
               </router-link>
             </div>
@@ -90,6 +95,28 @@
         // directive definition
         inserted: function (el) {
           el.focus()
+        }
+      }
+    },
+    computed: {
+      // This is needed because some text snippets contain HTML. - https://vuejs.org/v2/guide/computed.html
+      removeHTMLTagsFromTextSnippetIfPresent (textSnippet) {
+        // The patterns are needed to remove the HTML, and the test is needed because some text won't return when passed into this function. https://stackoverflow.com/questions/37623982/how-to-remove-html-tags-from-json-output
+        let pattern1 = /<[^>]+>/gm
+        let pattern2 = /&nbsp;/g
+        let pattern3 = /&rsquo;/
+        let pattern4 = /(&ldquo;)|(&rdquo;)/g
+        if (pattern1.test(textSnippet) ||
+            pattern2.test(textSnippet) ||
+            pattern3.test(textSnippet) ||
+            pattern4.test(textSnippet)) {
+          return textSnippet.replace(/<[^>]+>/gm, ' ')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&rsquo;/, '\'')
+            .replace(/(&ldquo;)|(&rdquo;)/g, '"')
+            .replace(/\s+/, ' ')
+        } else {
+          return textSnippet
         }
       }
     }

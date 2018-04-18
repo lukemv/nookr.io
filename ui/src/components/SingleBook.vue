@@ -44,12 +44,9 @@
             // check if it has returned a valid book
             if (response.data.totalItems === 0) {
               this.$router.push('book-not-found')
-            } else if (response.data.totalItems !== 0) {
-              console.log(response.data.items[0])
+            } else {
               this.book = response.data.items[0]
-              /* if (this.book === 'undefined') {
-                this.$router.push('book-not-found')
-              } */
+              console.log(response.data.items[0])
             }
           }, (error) => {
             this.loading = false

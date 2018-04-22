@@ -5,72 +5,41 @@
     </div>
     <div class="col-xs-12 col-sm-9">
       <div class="book-title">{{book.volumeInfo.title}}</div>
-      <!-- A check is needed here as not all books have ratings, this will probably need an additional function -->
-      <div class="book-google-rating">{{book.volumeInfo.averageRating}} stars from {{book.volumeInfo.ratingsCount}} readers.</div>
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
-      <!-- Another check is needed here as not all books the metadata filled out correctly, this will probably need an additional function -->
-      <div class="book-publisher-and-date-and-pages"> {{book.volumeInfo.publisher}}, {{book.volumeInfo.publishedDate.match(/\d{4}/).toString()}} - {{book.volumeInfo.pageCount}} pages.</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-      <p class="book-description">{{removeHTMLTagsFromDetailedDescriptionIfPresent}}</p>
-      <div class="book-isbn" v-for="isbnInformation in bookDetailed.industryIdentifiers">
-        <span v-for="isbnType in isbnInformation.type">{{isbnType.replace("_", " ")}}</span>:
-        <span v-for="isbn in isbnInformation.identifier">{{isbn}}</span>
+       <!-- A check is needed here as not all books have ratings, this will probably need an additional function -->
+      <div class="book-google-rating">
+          <span v-for="star in nookrInfo.rating">
+            <div class="star">&#9733;</div>
+          </span>
+            
       </div>
+
+      <!-- Addtional Book information needs to be added when Database content includes detailed book views -->
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-
   export default {
-    name: 'single-book',
+    name: 'book',
     data () {
       return {
         bookID: this.$route.query.id,
         isbn10: this.$route.query.isbn10,
         isbn13: this.$route.query.isbn13,
         book: [],
-        bookDetailed: []
+        nookrInfo: []
       }
     },
     methods: {
       searchBooks: function () {
-        this.loading = true
-        /* axios.get('https://www.googleapis.com/books/v1/volumes?q=' + this.bookID) */
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn' + this.isbn10)
-          .then((response) => {
-            this.loading = false
-            // check if it has returned a valid book
-            if (response.data.totalItems === 0) {
-              this.$router.push('book-not-found')
-            } else {
-              this.book = response.data.items[0]
-              console.log(response.data.items[0])
-            }
+        this.$http.get(`${this.$globals.api}/singleBook?id=` + this.bookID)
+          .then((res) => {
+            this.book = res.body.payload.book.googleInfo
+            this.nookrInfo = res.body.payload.book.nookrInfo
           }, (error) => {
-            this.loading = false
             console.log(error)
-            this.$router.push('book-not-found')
-          })
-      },
-      searchBookDetailed: function () {
-        this.loading = true
-        /* axios.get('https://www.googleapis.com/books/v1/volumes/' + this.bookID) */
-        axios.get('https://www.googleapis.com/books/v1/volumes/' + this.bookID)
-          .then((response) => {
-            this.loading = false
-            // check if it has returned a valid book
-            if (response.data.totalItems === 0) {
-              this.$router.push('book-not-found')
-            } else {
-              this.bookDetailed = response.data.volumeInfo
-              console.log(response.data.volumeInfo)
-            }
-          }, (error) => {
-            this.loading = false
-            console.log('searchBookDetailed error: ' + error)
-            this.$router.push('book-not-found')
           })
       }
     },
@@ -78,31 +47,8 @@
       // Checks if a bookID has been sent, if not, user is sent to error page
       if (typeof this.$route.query.id !== 'undefined') {
         this.searchBooks()
-        this.searchBookDetailed()
       } else {
         this.$router.push('book-not-found')
-      }
-    },
-    computed: {
-      // This is needed because some detailed descriptions contain HTML. - https://vuejs.org/v2/guide/computed.html
-      removeHTMLTagsFromDetailedDescriptionIfPresent: function () {
-        // The patterns are needed to remove the HTML, and the test is needed because some text won't return when passed into this function. https://stackoverflow.com/questions/37623982/how-to-remove-html-tags-from-json-output
-        let pattern1 = /<[^>]+>/gm
-        let pattern2 = /&nbsp;/g
-        let pattern3 = /&rsquo;/
-        let pattern4 = /(&ldquo;)|(&rdquo;)/g
-        if (pattern1.test(this.bookDetailed.description) ||
-          pattern2.test(this.bookDetailed.description) ||
-          pattern3.test(this.bookDetailed.description) ||
-          pattern4.test(this.bookDetailed.description)) {
-          return this.bookDetailed.description.replace(/<[^>]+>/gm, ' ')
-            .replace(/&nbsp;/g, ' ')
-            .replace(/&rsquo;/, '\'')
-            .replace(/(&ldquo;)|(&rdquo;)/g, '"')
-            .replace(/\s+/, ' ')
-        } else {
-          return this.bookDetailed.description
-        }
       }
     }
   }
@@ -126,11 +72,16 @@
     font-size: larger;
     color: #5f5b5f;
   }
-  .book-categories, .book-google-rating, .book-publisher-and-date-and-pages, .book-isbn {
+  .book-categories{
     padding-top: 10px;
     color: #8a848a;
   }
   .book-description{
     margin-top: 30px;
+  }
+  .star{
+   color: gold;
+   display: inline;
+   font-size: 1.5em;
   }
 </style>

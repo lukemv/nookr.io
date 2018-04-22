@@ -8,11 +8,26 @@
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
        <!-- A check is needed here as not all books have ratings, this will probably need an additional function -->
-      <div class="book-google-rating">
-          <span v-for="star in nookrInfo.rating">
-            <div class="star">&#9733;</div>
-          </span>
-            
+      <div class="book-google-rating row">
+          <div class="stars col-3" >
+            <span v-for="star in nookrInfo.rating">
+              <div class="star">&#9733;</div>
+            </span>
+          </div>
+          <div class="user-rating col-6">
+            <div class="rating-message">Rate This Book</div>
+            <select>
+              <option value="null" selected>-</option>
+              <option value="1">1 Star</option>
+              <option value="2">2 Star</option>
+              <option value="3">3 Star</option>
+              <option value="4">4 Star</option>
+              <option value="5">5 Star</option>
+            </select>
+          </div>
+      </div>
+      <div class="description">
+        {{getBookDescription()}}
       </div>
 
       <!-- Addtional Book information needs to be added when Database content includes detailed book views -->
@@ -41,6 +56,14 @@
           }, (error) => {
             console.log(error)
           })
+      },
+      // Returns a book description if there is one present, otherwise just returns a "no description" message
+      getBookDescription: function () {
+        if (this.book.volumeInfo.description) {
+          return this.book.volumeInfo.description
+        } else {
+          return 'Unfortunately no description is available for this book'
+        }
       }
     },
     created: function () {
@@ -81,7 +104,15 @@
   }
   .star{
    color: gold;
-   display: inline;
+   display: inline-block;
    font-size: 1.5em;
+  }
+  .rating-message{
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 8px;
+  }
+  .description{
+    margin-top: 50px;
   }
 </style>

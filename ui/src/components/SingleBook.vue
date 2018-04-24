@@ -14,17 +14,21 @@
               <div class="star">&#9733;</div>
             </span>
           </div>
-          <div class="user-rating col-6">
+          <div v-if="hasAuth" class="user-rating col-6">
             <div class="rating-message">Rate This Book</div>
             <select>
-              <option value="null" selected>-</option>
+              <option value="null" disabled selected>-</option>
               <option value="1">1 Star</option>
               <option value="2">2 Star</option>
               <option value="3">3 Star</option>
               <option value="4">4 Star</option>
               <option value="5">5 Star</option>
             </select>
+            <button class="btn btn-primary btn-xs" type="submit"> Rate</button>
           </div>
+          <div v-else class="user-rating col-6">
+            <router-link :to="{ name: 'Login' }">Login</router-link> or
+            <router-link :to="{ name: 'Register' }">Register</router-link> to Rate a Book</div>
       </div>
       <div class="description">
         {{getBookDescription()}}
@@ -64,6 +68,14 @@
         } else {
           return 'Unfortunately no description is available for this book'
         }
+      }
+    },
+    computed: {
+      user: function () {
+        return this.$globals.user
+      },
+      hasAuth: function () {
+        return this.$globals.user !== null
       }
     },
     created: function () {
@@ -111,6 +123,13 @@
     display: inline-block;
     margin-right: 10px;
     margin-top: 8px;
+  }
+  .user-rating button{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: 15px;
   }
   .description{
     margin-top: 50px;

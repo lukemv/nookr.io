@@ -27,8 +27,13 @@ var userSchema = mongoose.Schema({
         token        : String,
         email        : String,
         name         : String
-    }
-
+    },
+    books: [
+        {
+            bookID: 'String',
+            rating: 'Number'
+        }
+    ]
 });
 
 // methods ======================

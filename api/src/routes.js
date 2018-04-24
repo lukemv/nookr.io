@@ -144,7 +144,14 @@ module.exports = function(app, passport, session) {
         var nookrInfo =  ({
           'date': new Date(),
           // Hardcoded rating
-          'rating': hardCodedRating
+          'rating': hardCodedRating,
+          // hard coded ratings
+          'ratings': [
+            {
+              'userID': '123124897fd',
+              'rating': 4
+            }
+          ]
         });
         var volume = ({
           'nookrInfo': nookrInfo,

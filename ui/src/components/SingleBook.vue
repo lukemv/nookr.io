@@ -16,15 +16,15 @@
           </div>
           <div v-if="hasAuth" class="user-rating col-6">
             <div class="rating-message">Rate This Book</div>
-            <select>
-              <option value="null" disabled selected>-</option>
+            <select v-model="rating">
+              <option disabled value="">-</option>
               <option value="1">1 Star</option>
-              <option value="2">2 Star</option>
-              <option value="3">3 Star</option>
-              <option value="4">4 Star</option>
-              <option value="5">5 Star</option>
+              <option value="2">2 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
             </select>
-            <button class="btn btn-primary btn-xs" type="submit"> Rate</button>
+            <button class="btn btn-primary btn-xs" v-on:click="rateBook">Rate</button>
           </div>
           <div v-else class="user-rating col-6">
             <router-link :to="{ name: 'Login' }">Login</router-link> or
@@ -48,7 +48,9 @@
         isbn10: this.$route.query.isbn10,
         isbn13: this.$route.query.isbn13,
         book: [],
-        nookrInfo: []
+        nookrInfo: [],
+        rating: '',
+        currentUser: []
       }
     },
     methods: {
@@ -60,6 +62,13 @@
           }, (error) => {
             console.log(error)
           })
+      },
+      // Sends a rating to the database, updates user and book schemas
+      rateBook: function () {
+        console.log(this.rating)
+        console.log(this.bookID)
+        var id = this.user.id
+        this.$http.get(`${this.$globals.api}/addRating?userID=` + id + `&bookID=` + this.bookID + `&rating=` + this.rating)
       },
       // Returns a book description if there is one present, otherwise just returns a "no description" message
       getBookDescription: function () {
@@ -85,6 +94,7 @@
       } else {
         this.$router.push('book-not-found')
       }
+      this.currentUser = this.user
     }
   }
 </script>

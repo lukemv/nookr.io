@@ -209,26 +209,30 @@ module.exports = function(app, passport, session) {
     
     User.findById(userID, (err, user) => {
       var rating = {bookID: bookID, rating: ratingNumber};
-      user.books.push(rating);
-      this.user = user
+      var bookFound = false;
+      for (var i = 0; i < user.books.length; i++) {
+        console.log('Old Book ID: ' + user.books[i].bookID + '    ' + bookID + '  Comparison ID (new)' );
+        // If an entry already exists, overwrite it
+        if (user.books[i].bookID === bookID){
+          bookFound = true;
+          console.log('book matched');
+          user.books[i].rating = ratingNumber;
+        }
+      }
+      
+      // If a previous rating does not exist, push a new one to the user's books
+      if (!bookFound){
+        console.log('book didn\'t match');
+        user.books.push(rating);
+      }
+    
       user.save(function(err) {
         console.log('Pushing to user: ' + JSON.stringify(rating))
         if (err) {
           console.log(err);
         }
+        res.status(200).send(payload('user', {'user': this.user}));
       });
-    }).then(
-      Book.findOne({ 'googleInfo.id':  bookID },(err, book) => {
-        var rating = {userID: userID, rating: ratingNumber};
-        book.nookrInfo.ratings.push(rating);
-        book.save(function(err) {
-          console.log('Pushing to Book: ' + JSON.stringify(rating))
-          if (err) {
-            console.log(err);
-          }
-        });
-        res.status(200).send(payload('ratings', {'book': book, 'user': this.user}));
-      })
-    );
+    });
   });
 };

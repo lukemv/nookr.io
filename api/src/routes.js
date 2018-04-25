@@ -7,7 +7,7 @@ const Book = require('./models/book');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
-  const authWhitelist = {path: ['/health', '/register', '/login', '/addRating', '/googleVolumeSearch', '/singleBook', '/trending', 'myList']};
+  const authWhitelist = {path: ['/health', '/register', '/login', '/addRating', '/googleVolumeSearch', '/singleBook', '/trending', '/userList']};
   const isRevokedCallback = (req, payload, done) => {
     const issuer = payload.iss;
     const userId = payload.cid;
@@ -120,25 +120,33 @@ module.exports = function(app, passport, session) {
       res.status(200).send(payload('book', {bookList}));
     });
   });
-  // Gets all Books rated by a user
-  app.get('/myList', (req, res, next) => {
-    const date = new Date();
-    var bookList = [];
-    Book.find({}, function(err, books) {
-      if (err) {
-        res.status(404).send(payload('info', {message: 'book not found'}));
-      }
-      
-      // Search through each book and return only the ones rated above or equal to 3
-      books.forEach(function(book) {
-        if (book.nookrInfo.rating >= 3){
-          bookList.push(book.googleInfo);
-        }
-      });
-      
-      res.status(200).send(payload('book', {bookList}));
-    });
-  });
+  
+  // // Gets all Books rated by a user
+  // app.get('/userList', (req, res, next) => {
+  //   console.log('Hit mylist');
+
+  //   // const userID = req.query.userID;
+  //   const userID = '5adfd942e93aa00eb2d26c9c';
+  //   var bookList = [];
+  //   var bookIDs = [];
+    
+  //   User.findById(userID, (err, user) => {
+  //     console.log('found user');
+  //     // Search through each book and return only the ones rated above or equal to 3
+  //     var books = user.books;
+  //     console.log(JSON.stringify(books));
+  //     books.forEach(bookID => {
+  //       Book.findOne({ 'googleInfo.id':  bookID.bookID }, function(err, book) {
+  //         if (err) {
+  //           res.status(404).send(payload('info', {message: 'book not found'}));
+  //         }
+  //         bookList.push(book);
+  //       });
+  //     }).then(
+  //       res.status(200).send(payload('book', {bookList}))
+  //     );
+  //   });
+  // });
 
   app.get('/singleBook', (req, res, next) =>{
     const id = req.query.id;

@@ -204,6 +204,7 @@ module.exports = function(app, passport, session) {
     const userID = req.query.userID;
     const bookID = req.query.bookID;
     const ratingNumber = req.query.rating;
+    // console.log('FROM ADD RATING: User: ' + userID + '  bookID: ' + bookID);
     
     User.findById(userID, (err, user) => {
       var rating = {bookID: bookID, rating: ratingNumber};
@@ -234,11 +235,10 @@ module.exports = function(app, passport, session) {
   app.get('/getRating', (req, res, next) => {
     const userID = req.query.userID;
     const bookID = req.query.bookID;
-
+    console.log('FROM GET RATING: User: ' + userID + '  bookID: ' + bookID);
     var returnRating = 0;
 
     User.findById(userID, (err, user) => {
-      
       try{
           for (var i = 0; i < user.books.length; i++) {
           // If an entry already exists, overwrite it
@@ -249,10 +249,8 @@ module.exports = function(app, passport, session) {
       } catch(err) {
         console.log(err);
       }
-      
+      // Return rating
+      res.status(200).send(payload('rating', {'bookRating': returnRating}))
     });
-    // Return rating 
-    console.log('returning rating')
-    res.status(200).send(payload('rating', {'bookRating': returnRating}));
   });
 };

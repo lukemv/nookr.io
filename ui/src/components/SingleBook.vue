@@ -7,16 +7,15 @@
       <div class="book-title">{{book.volumeInfo.title}}</div>
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-       <!-- A check is needed here as not all books have ratings, this will probably need an additional function -->
-      <div class="book-google-rating row">
+      <div v-if="" class="book-rating row">
           <div class="col-6" >
             <div class='rating-message'>Rate this book</div>
             <div class="stars">
               <span v-for="i in goldStars">
-              <div class="star" v-on:click="rateBook(i)">&#9733;</div>
+              <div class="star star-gold" v-on:click="rateBook(i)" v-bind:id="i">&#9733;</div>
             </span>
             <span v-for="i in greyStars">
-              <div class="star-grey" v-on:click="rateBook(i)">&#9733;</div>
+              <div class="star star-grey" v-on:click="rateBook(i + goldStars)">&#9733;</div>
             </span>
             </div>
           </div>
@@ -45,7 +44,6 @@
         book: [],
         nookrInfo: [],
         rating: '',
-        currentUser: [],
         greyStars: 5,
         goldStars: 0,
         ratingMessage: 'Rate This Book'
@@ -65,12 +63,11 @@
           )
       },
       getUserRating: function () {
-        var id = this.$globals.user
+        var id = this.user.id
         this.$http.get(`${this.$globals.api}/getRating?userID=` + id + `&bookID=` + this.bookID)
           .then((res) => {
             this.goldStars = res.body.payload.bookRating
-            if (this.goldStars === 0) {
-              console.log('changing rating message')
+            if (this.goldStars !== 0) {
               this.ratingMessage = 'Your Current Rating'
             }
             this.greyStars = 5 - this.goldStars
@@ -79,11 +76,14 @@
           })
       },
       rateBook: function (rating) {
-        console.log(rating)
-        console.log(this.bookID)
         var id = this.user.id
-        console.log(id)
         this.$http.get(`${this.$globals.api}/addRating?userID=` + id + `&bookID=` + this.bookID + `&rating=` + rating)
+          .then((res) => {
+            // Get the rating back from the database
+            this.getUserRating()
+          }, (error) => {
+            console.log(error)
+          })
       },
       // Returns a book description if there is one present, otherwise just returns a "no description" message
       getBookDescription: function () {
@@ -102,14 +102,16 @@
         return this.$globals.user !== null
       }
     },
+    mounted: function () {
+      this.searchBooks()
+    },
     created: function () {
       // Checks if a bookID has been sent, if not, user is sent to error page
       if (typeof this.$route.query.id !== 'undefined') {
-        this.searchBooks()
+        console.log('book-found')
       } else {
         this.$router.push('book-not-found')
       }
-      this.currentUser = this.user
     }
   }
 </script>
@@ -139,21 +141,25 @@
   .book-description{
     margin-top: 30px;
   }
-  .stars{
-    height: 2em;
+  .book-rating{
+    margin-top: 10px;
   }
   .star{
-   color: gold;
-   display: inline-block;
-   font-size: 1.5em;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: inline-block;
+    font-size: 1.5em;
+    -webkit-transition: .3s; /* Safari */
+    transition: .3s;
+  }
+  .star-gold{
+    color: gold;
   }
   .star-grey{
-   color: rgb(207, 207, 207);
-   display: inline-block;
-   font-size: 1.5em;
+    color: rgb(207, 207, 207);
   }
-  .star:hover, .star-grey:hover{
-    font-size: 1.7em;  
+  .star:hover{
+    transform: scale(1.5);
     cursor:pointer;
   }
   .rating-message{
@@ -163,6 +169,6 @@
   }
  
   .description{
-    margin-top: 50px;
+    margin-top: 30px;
   }
 </style>

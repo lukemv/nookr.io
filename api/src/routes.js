@@ -7,7 +7,7 @@ const Book = require('./models/book');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
-  const authWhitelist = {path: ['/health', '/register', '/login', '/addRating', '/googleVolumeSearch', '/singleBook', '/trending', '/userList']};
+  const authWhitelist = {path: ['/health', '/register', '/getRating', '/login', '/addRating', '/googleVolumeSearch', '/singleBook', '/trending', '/userList']};
   const isRevokedCallback = (req, payload, done) => {
     const issuer = payload.iss;
     const userId = payload.cid;
@@ -204,35 +204,55 @@ module.exports = function(app, passport, session) {
     const userID = req.query.userID;
     const bookID = req.query.bookID;
     const ratingNumber = req.query.rating;
-    console.log('called... user: ' + userID + '  BookID: ' + bookID + '  rating: ' + ratingNumber);
-    var user;
     
     User.findById(userID, (err, user) => {
       var rating = {bookID: bookID, rating: ratingNumber};
       var bookFound = false;
       for (var i = 0; i < user.books.length; i++) {
-        console.log('Old Book ID: ' + user.books[i].bookID + '    ' + bookID + '  Comparison ID (new)' );
         // If an entry already exists, overwrite it
         if (user.books[i].bookID === bookID){
           bookFound = true;
-          console.log('book matched');
           user.books[i].rating = ratingNumber;
         }
       }
       
       // If a previous rating does not exist, push a new one to the user's books
       if (!bookFound){
-        console.log('book didn\'t match');
         user.books.push(rating);
       }
     
       user.save(function(err) {
-        console.log('Pushing to user: ' + JSON.stringify(rating))
         if (err) {
           console.log(err);
         }
         res.status(200).send(payload('user', {'user': this.user}));
       });
     });
+  });
+
+  // Gets a User rating for a particular book
+  app.get('/getRating', (req, res, next) => {
+    const userID = req.query.userID;
+    const bookID = req.query.bookID;
+
+    var returnRating = 0;
+
+    User.findById(userID, (err, user) => {
+      
+      try{
+          for (var i = 0; i < user.books.length; i++) {
+          // If an entry already exists, overwrite it
+          if (user.books[i].bookID === bookID){
+            returnRating = user.books[i].rating;
+          }
+        }
+      } catch(err) {
+        console.log(err);
+      }
+      
+    });
+    // Return rating 
+    console.log('returning rating')
+    res.status(200).send(payload('rating', {'bookRating': returnRating}));
   });
 };

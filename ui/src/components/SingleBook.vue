@@ -9,26 +9,21 @@
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
        <!-- A check is needed here as not all books have ratings, this will probably need an additional function -->
       <div class="book-google-rating row">
-          <div class="stars col-3" >
-            <span v-for="star in nookrInfo.rating">
-              <div class="star">&#9733;</div>
+          <div class="col-6" >
+            <div class='rating-message'>Rate this book</div>
+            <div class="stars">
+              <span v-for="i in goldStars">
+              <div class="star" v-on:click="rateBook(i)">&#9733;</div>
             </span>
+            <span v-for="i in greyStars">
+              <div class="star-grey" v-on:click="rateBook(i)">&#9733;</div>
+            </span>
+            </div>
           </div>
-          <div v-if="hasAuth" class="user-rating col-6">
-            <div class="rating-message">Rate This Book</div>
-            <select v-model="rating">
-              <option disabled value="">-</option>
-              <option value="1">1 Star</option>
-              <option value="2">2 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="5">5 Stars</option>
-            </select>
-            <button class="btn btn-primary btn-xs" v-on:click="rateBook">Rate</button>
-          </div>
-          <div v-else class="user-rating col-6">
+          
+          <!-- <div v-else class="user-rating col-6">
             <router-link :to="{ name: 'Login' }">Login</router-link> or
-            <router-link :to="{ name: 'Register' }">Register</router-link> to Rate a Book</div>
+            <router-link :to="{ name: 'Register' }">Register</router-link> to Rate a Book</div> -->
       </div>
       <div class="description">
         {{getBookDescription()}}
@@ -50,7 +45,10 @@
         book: [],
         nookrInfo: [],
         rating: '',
-        currentUser: []
+        currentUser: [],
+        greyStars: 5,
+        goldStars: 0,
+        ratingMessage: 'Rate This Book'
       }
     },
     methods: {
@@ -62,13 +60,30 @@
           }, (error) => {
             console.log(error)
           })
+          .then(
+            this.getUserRating()
+          )
       },
-      // Sends a rating to the database, updates user and book schemas
-      rateBook: function () {
-        console.log(this.rating)
+      getUserRating: function () {
+        var id = this.$globals.user
+        this.$http.get(`${this.$globals.api}/getRating?userID=` + id + `&bookID=` + this.bookID)
+          .then((res) => {
+            this.goldStars = res.body.payload.bookRating
+            if (this.goldStars === 0) {
+              console.log('changing rating message')
+              this.ratingMessage = 'Your Current Rating'
+            }
+            this.greyStars = 5 - this.goldStars
+          }, (error) => {
+            console.log(error)
+          })
+      },
+      rateBook: function (rating) {
+        console.log(rating)
         console.log(this.bookID)
         var id = this.user.id
-        this.$http.get(`${this.$globals.api}/addRating?userID=` + id + `&bookID=` + this.bookID + `&rating=` + this.rating)
+        console.log(id)
+        this.$http.get(`${this.$globals.api}/addRating?userID=` + id + `&bookID=` + this.bookID + `&rating=` + rating)
       },
       // Returns a book description if there is one present, otherwise just returns a "no description" message
       getBookDescription: function () {
@@ -124,23 +139,29 @@
   .book-description{
     margin-top: 30px;
   }
+  .stars{
+    height: 2em;
+  }
   .star{
    color: gold;
    display: inline-block;
    font-size: 1.5em;
+  }
+  .star-grey{
+   color: rgb(207, 207, 207);
+   display: inline-block;
+   font-size: 1.5em;
+  }
+  .star:hover, .star-grey:hover{
+    font-size: 1.7em;  
+    cursor:pointer;
   }
   .rating-message{
     display: inline-block;
     margin-right: 10px;
     margin-top: 8px;
   }
-  .user-rating button{
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    margin-left: 15px;
-  }
+ 
   .description{
     margin-top: 50px;
   }

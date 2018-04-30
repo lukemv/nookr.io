@@ -10,7 +10,13 @@ var bookSchema = mongoose.Schema({
         },
         rating: {
             type: 'Number'
-        }
+        },
+        ratings: [
+            {
+                userID: 'String',
+                rating: 'Number'
+            }
+        ]
     },
     googleInfo: {
         kind: {

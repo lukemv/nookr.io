@@ -17,7 +17,8 @@ var bookSchema = mongoose.Schema({
             type: 'String'
         },
         id: {
-            type: 'String'
+            type: 'String',
+            unique: true
         },
         etag: {
             type: 'String'

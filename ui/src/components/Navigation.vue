@@ -3,20 +3,19 @@
     <span class="navbar-brand mb-0 h1">nookr.io</span>
     <span class="navbar-text">
       <ul class="nav">
-        <li class="ml-1 pl-2">
+        <li v-if="hasAuth" class="ml-1 pl-2">
           <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
         </li>
-        <li class="ml-1 pl-2">
+        <li v-if="hasAuth" class="ml-1 pl-2">
           <router-link :to="{ name: 'BookList' }">Book List</router-link>
         </li>
-        <li class="ml-1 pl-2">
+        <li v-if="hasAuth" class="ml-1 pl-2">
           <router-link :to="{ name: 'NYBooks' }">NY Bestsellers</router-link>
-        <li v-if="hasAuth" class="pl-2">|</li>
         <li class="ml-1 pl-2" v-if="!('Login' === $route.name) && !hasAuth">
-          <router-link :to="{ name: 'Login' }">Login</router-link>
+          <router-link class="btn btn-outline-light" :to="{ name: 'Login' }">Login</router-link>
         </li>
         <li class="ml-1 pl-2" v-if="!('Register' === $route.name) && !hasAuth">
-          <router-link :to="{ name: 'Register' }">Register</router-link>
+          <router-link class="btn btn-outline-light" :to="{ name: 'Register' }">Register</router-link>
         </li>
         <li class="ml-1 pl-2" v-if="hasAuth">
           {{user.local.email}}
@@ -55,5 +54,8 @@ export default {
   .navbar-brand {
     font-family: Pacifico;
     font-size: 1.8rem;
+  }
+  .btn-outline-light:hover {
+    background-color: #30a5a0;
   }
 </style>

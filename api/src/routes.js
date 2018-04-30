@@ -7,7 +7,7 @@ const Book = require('./models/book');
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
-  const authWhitelist = {path: ['/health', '/register', '/getRating', '/login', '/addRating', '/googleVolumeSearch', '/singleBook', '/trending', '/userList']};
+  const authWhitelist = {path: ['/health', '/register', '/login', '/googleVolumeSearch', '/singleBook', '/trending', '/userList']};
   const isRevokedCallback = (req, payload, done) => {
     const issuer = payload.iss;
     const userId = payload.cid;
@@ -120,33 +120,6 @@ module.exports = function(app, passport, session) {
       res.status(200).send(payload('book', {bookList}));
     });
   });
-  
-  // // Gets all Books rated by a user
-  // app.get('/userList', (req, res, next) => {
-  //   console.log('Hit mylist');
-
-  //   // const userID = req.query.userID;
-  //   const userID = '5adfd942e93aa00eb2d26c9c';
-  //   var bookList = [];
-  //   var bookIDs = [];
-    
-  //   User.findById(userID, (err, user) => {
-  //     console.log('found user');
-  //     // Search through each book and return only the ones rated above or equal to 3
-  //     var books = user.books;
-  //     console.log(JSON.stringify(books));
-  //     books.forEach(bookID => {
-  //       Book.findOne({ 'googleInfo.id':  bookID.bookID }, function(err, book) {
-  //         if (err) {
-  //           res.status(404).send(payload('info', {message: 'book not found'}));
-  //         }
-  //         bookList.push(book);
-  //       });
-  //     }).then(
-  //       res.status(200).send(payload('book', {bookList}))
-  //     );
-  //   });
-  // });
 
   app.get('/singleBook', (req, res, next) =>{
     const id = req.query.id;
@@ -201,10 +174,9 @@ module.exports = function(app, passport, session) {
   });
   // Adds a rating for the Book and User models
   app.get('/addRating', (req, res, next) => {
-    const userID = req.query.userID;
+    const userID = req.user.cid;
     const bookID = req.query.bookID;
     const ratingNumber = req.query.rating;
-    // console.log('FROM ADD RATING: User: ' + userID + '  bookID: ' + bookID);
     
     User.findById(userID, (err, user) => {
       var rating = {bookID: bookID, rating: ratingNumber};
@@ -226,22 +198,23 @@ module.exports = function(app, passport, session) {
         if (err) {
           console.log(err);
         }
-        res.status(200).send(payload('user', {'user': this.user}));
+        // Return the new rating
+        res.status(200).send(payload('rating', {'bookRating': ratingNumber}));
       });
     });
   });
 
   // Gets a User rating for a particular book
   app.get('/getRating', (req, res, next) => {
-    const userID = req.query.userID;
+    const userID = req.user.cid;
     const bookID = req.query.bookID;
-    console.log('FROM GET RATING: User: ' + userID + '  bookID: ' + bookID);
+    
     var returnRating = 0;
 
     User.findById(userID, (err, user) => {
       try{
           for (var i = 0; i < user.books.length; i++) {
-          // If an entry already exists, overwrite it
+          // If an entry exists, return it
           if (user.books[i].bookID === bookID){
             returnRating = user.books[i].rating;
           }

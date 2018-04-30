@@ -9,7 +9,7 @@
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
       <div v-if="" class="book-rating row">
           <div class="col-6" >
-            <div class='rating-message'>Rate this book</div>
+            <div class='rating-message'>{{ratingMessage}}</div>
             <div class="stars">
               <span v-for="i in goldStars">
               <div class="star star-gold" v-on:click="rateBook(i)" v-bind:id="i">&#9733;</div>
@@ -58,28 +58,26 @@
           }, (error) => {
             console.log(error)
           })
-          .then(
-            this.getUserRating()
-          )
       },
       getUserRating: function () {
-        var id = this.user.id
-        this.$http.get(`${this.$globals.api}/getRating?userID=` + id + `&bookID=` + this.bookID)
+        this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
           .then((res) => {
+            // Get the rating back from the database and set it to view
             this.goldStars = res.body.payload.bookRating
-            if (this.goldStars !== 0) {
+            this.greyStars = 5 - res.body.payload.bookRating
+
+            // Set the rating description to match the rating
+            if (this.goldStars > 0) {
               this.ratingMessage = 'Your Current Rating'
             }
-            this.greyStars = 5 - this.goldStars
           }, (error) => {
             console.log(error)
           })
       },
       rateBook: function (rating) {
-        var id = this.user.id
-        this.$http.get(`${this.$globals.api}/addRating?userID=` + id + `&bookID=` + this.bookID + `&rating=` + rating)
+        this.$http.get(`${this.$globals.api}/addRating?bookID=` + this.bookID + `&rating=` + rating)
           .then((res) => {
-            // Get the rating back from the database
+            // Get the rating back from the database and set it to view
             this.getUserRating()
           }, (error) => {
             console.log(error)
@@ -104,6 +102,7 @@
     },
     mounted: function () {
       this.searchBooks()
+      this.getUserRating()
     },
     created: function () {
       // Checks if a bookID has been sent, if not, user is sent to error page

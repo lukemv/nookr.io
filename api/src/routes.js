@@ -4,6 +4,11 @@ const jwt = require('express-jwt');
 const User = require('./models/user');
 const libnook = require('./libnook');
 const Book = require('./models/book');
+const raccoon = require('raccoon');
+
+raccoon.config.nearestNeighbors = 2;  // number of neighbors you want to compare a user against
+raccoon.config.className = 'book';  // prefix for your items (used for redis)
+raccoon.config.numOfRecsStore = 30;  // number of recommendations to store per user
 
 module.exports = function(app, passport, session) {
   // Enforce JWT middleware with whitelisted routes.
@@ -101,7 +106,7 @@ module.exports = function(app, passport, session) {
       }
     }));
   })
-  
+
   app.get('/trending', (req, res, next) => {
     const date = new Date();
     var bookList = [];
@@ -109,14 +114,14 @@ module.exports = function(app, passport, session) {
       if (err) {
         res.status(404).send(payload('info', {message: 'book not found'}));
       }
-      
+
       // Search through each book and return only the ones rated above or equal to 3
       books.forEach(function(book) {
         if (book.nookrInfo.rating >= 3){
           bookList.push(book.googleInfo);
         }
       });
-      
+
       res.status(200).send(payload('book', {bookList}));
     });
   });
@@ -137,7 +142,7 @@ module.exports = function(app, passport, session) {
     libnook.googleVolumeSearch(q).then((volumes) => {
 
       var bookList = [];
-      
+
       // loop through the items and make a Book and add it to the bookList
       for (var i =0; i < volumes.items.length; i++) {
         var hardCodedRating = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
@@ -160,7 +165,7 @@ module.exports = function(app, passport, session) {
         var book = new Book(volume);
         bookList.push(book)
       }
-    
+
       Book.insertMany(bookList).then((result) => {
         //console.log(JSON.stringify(volumes.items[0], null, 2));
         res.status(200).send(payload('googleVolumeList', {volumes}));
@@ -172,34 +177,50 @@ module.exports = function(app, passport, session) {
 
     });
   });
+
+  app.get('/suggestions', (req, res, next) => {
+    const userID = req.user.cid;
+    const nResults = req.query.n;
+    raccoon.recommendFor(userID, nResults).then((bookIds) => {
+      console.log(bookIds);
+      res.status(200).send(payload('suggestions', bookIds));
+    }).catch((err) => {
+      console.log(err);
+      res.status(500).send(payload('error', {message: err.message}));
+     });
+  });
+
   // Adds a rating for the Book and User models
   app.get('/addRating', (req, res, next) => {
     const userID = req.user.cid;
     const bookID = req.query.bookID;
     const ratingNumber = req.query.rating;
-    
-    User.findById(userID, (err, user) => {
-      var rating = {bookID: bookID, rating: ratingNumber};
-      var bookFound = false;
-      for (var i = 0; i < user.books.length; i++) {
-        // If an entry already exists, overwrite it
-        if (user.books[i].bookID === bookID){
-          bookFound = true;
-          user.books[i].rating = ratingNumber;
+
+    raccoon.liked(userID, bookID).then(() => {
+      console.log(`Book rating successful (${userID}, ${bookID})`)
+      User.findById(userID, (err, user) => {
+        var rating = {bookID: bookID, rating: ratingNumber};
+        var bookFound = false;
+        for (var i = 0; i < user.books.length; i++) {
+          // If an entry already exists, overwrite it
+          if (user.books[i].bookID === bookID){
+            bookFound = true;
+            user.books[i].rating = ratingNumber;
+          }
         }
-      }
-      
-      // If a previous rating does not exist, push a new one to the user's books
-      if (!bookFound){
-        user.books.push(rating);
-      }
-    
-      user.save(function(err) {
-        if (err) {
-          console.log(err);
+
+        // If a previous rating does not exist, push a new one to the user's books
+        if (!bookFound){
+          user.books.push(rating);
         }
-        // Return the new rating
-        res.status(200).send(payload('rating', {'bookRating': ratingNumber}));
+
+        user.save(function(err) {
+          if (err) {
+            console.log(err);
+          }
+          // Return the new rating
+          res.status(200).send(payload('rating', {'bookRating': ratingNumber}));
+        });
       });
     });
   });
@@ -208,7 +229,7 @@ module.exports = function(app, passport, session) {
   app.get('/getRating', (req, res, next) => {
     const userID = req.user.cid;
     const bookID = req.query.bookID;
-    
+
     var returnRating = 0;
 
     User.findById(userID, (err, user) => {

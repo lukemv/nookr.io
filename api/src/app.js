@@ -15,6 +15,10 @@ const mongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
 const redisHost = process.env.RedisHost || 'localhost';
 const redisPort = process.env.RedisPort || 6379;
 
+// Set raccoon environment variables
+process.env.RACCOON_REDIS_URL = redisHost;
+process.env.RACCOON_REDIS_PORT = redisPort;
+
 const app = express();
 
 app.use(passport.initialize());

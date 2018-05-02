@@ -37,8 +37,10 @@
               this.loading = false
               book['title'] = (response.body.payload.book.googleInfo.volumeInfo.title)
               book['coverImage'] = (response.body.payload.book.googleInfo.volumeInfo.imageLinks.thumbnail)
+              book['authors'] = (response.body.payload.book.googleInfo.volumeInfo.authors)
+              book['categories'] = (response.body.payload.book.googleInfo.volumeInfo.categories)
               // Place the single book into the desired bookshelf
-              bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID})
+              bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID, authors: book.authors, categories: book.categories})
             }, (error) => {
               this.loading = false
               console.log(error)

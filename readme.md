@@ -1,4 +1,31 @@
-## nook.io
+## nook.io - 
+
+**Quick Start**
+
+1 - Ensure that docker is installed
+
+2 - Bring up redis and mongo: `docker-compose up -d`
+
+3 - Running the ui in development mode:
+
+```
+cd ./ui
+npm install
+npm run dev
+```
+
+4 - Running the API in dev mode
+
+```
+cd ./api
+npm install
+npm run dev
+```
+
+
+
+---
+
 
 
 **Local Development - Auxiliary services**

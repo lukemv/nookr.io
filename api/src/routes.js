@@ -161,13 +161,17 @@ module.exports = function(app, passport, session) {
         bookList.push(book)
       }
     
-      Book.insertMany(bookList).then((result) => {
-        //console.log(JSON.stringify(volumes.items[0], null, 2));
+      Book.insertMany(bookList, {ordered:false}).then((result) => {
         res.status(200).send(payload('googleVolumeList', {volumes}));
       }).catch((err) => {
+        if (err.code == '11000' ) {
+          console.log('duplicates...');
+          res.status(200).send(payload('googleVolumeList', {volumes}));
+        } else {
         console.error(err);
         // return something here to say that something went wrong.
         res.status(500).send(payload('error', {message: err.message}));
+        }
       })
 
     });

@@ -5,10 +5,15 @@ const User = require('../models/user');
 const payload = require('../models/payload');
 
 module.exports = (passport, session) => {
-
   // POST /auth/register
   router.post('/register', (req, res, next) => {
     passport.authenticate('local-signup', (err, user, info) => {
+      if (err) {
+        console.error('Passport authentication error');
+        console.error(err);
+        res.status(500).send(err).end();
+      }
+
       const status = info.messageType === 'signupSuccess' ? 201 : 200;
       res.status(status).send(info).end();
     })(req, res);
@@ -17,6 +22,12 @@ module.exports = (passport, session) => {
   // POST /auth/login
   router.post('/login', (req, res, next) => {
     passport.authenticate('local-login', (err, user, info) => {
+      if (err) {
+        console.error('Passport authentication error');
+        console.error(err);
+        res.status(500).send(err).end();
+      }
+
       res.status(200).send(info).end();
     })(req, res);
   });
@@ -60,7 +71,7 @@ module.exports = (passport, session) => {
       });
 
       return res.status(200).send(pl);
-    })
+    });
   });
 
   return router;

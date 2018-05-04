@@ -1,24 +1,23 @@
 const jwt = require('jsonwebtoken');
 const config = require('./config');
-const redis = require("redis");
+const redis = require('redis');
 const uuid = require('uuid/v4');
 
 module.exports = (redisOptions) => {
-
   const client = redis.createClient(redisOptions.port, redisOptions.host);
 
-  client.on("error", function (err) {
-    console.log("RedisError:" + err);
+  client.on('error', function (err) {
+    console.log('RedisError:' + err);
   });
 
   return {
     isRevoked: (issuer, userId, jti, done) => {
       client.get(`auth:tokens:${config.jwtIssuer}:${userId}`, (err, res) => {
         if (err) { return done(err); }
-        return done(null, res !== jti)
+        return done(null, res !== jti);
       });
     },
-    revokeToken: (issuer, userId, jti, done) =>  {
+    revokeToken: (issuer, userId, jti, done) => {
       return client.del(`auth:tokens:${config.jwtIssuer}:${userId}`, done);
     },
     generateToken: (userId) => {
@@ -45,5 +44,5 @@ module.exports = (redisOptions) => {
 
       return { token, expires: config.authExpiresSeconds };
     }
-  }
-}
+  };
+};

@@ -12,7 +12,7 @@ const payload = require('./models/payload');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
-const port = (env == 'prod' ||  env == 'uat' || env == 'docker') ? 80 : 8081;
+const port = (env === 'prod' || env === 'uat' || env === 'docker') ? 80 : 8081;
 const mongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
 const redisHost = process.env.RedisHost || 'localhost';
 const redisPort = process.env.RedisPort || 6379;
@@ -33,9 +33,9 @@ const redisOptions = {
 const session = require('./services/session')(redisOptions);
 require('./services/passport')(passport, session);
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next();
 });
 
@@ -44,7 +44,7 @@ const authWhitelist = {
   path: [
     '/auth/health',
     '/auth/register',
-    '/auth/login',
+    '/auth/login'
   ]
 };
 
@@ -53,7 +53,7 @@ const isRevokedCallback = (req, payload, done) => {
   const userId = payload.cid;
   const jti = payload.jti;
   session.isRevoked(issuer, userId, jti, done);
-}
+};
 
 app.use(jwt({
   secret: config.jwtSecret,
@@ -71,7 +71,6 @@ app.use('/health', healthRouter);
 app.use('/auth', authRouter(passport, session));
 app.use('/rating', ratingRouter);
 // Routes End
-
 
 // Handle unauthorized requests here.
 // It's important that method's with

@@ -11,23 +11,33 @@ router.post('/', (req, res, next) => {
   const ratingNumber = req.body.rating;
 
   User.findById(userID, (err, user) => {
-    var rating = {bookID: bookID, rating: ratingNumber};
-    var bookFound = false;
-    for (var i = 0; i < user.books.length; i++) {
+    if (err) {
+      res.status(200).send(payload('rating', {
+        message: 'Failed to find user for rating with ID: ' + userID
+      }));
+      console.log(err);
+    }
+
+    const rating = {bookID: bookID, rating: ratingNumber};
+    let bookFound = false;
+    for (let i = 0; i < user.books.length; i++) {
       // If an entry already exists, overwrite it
-      if (user.books[i].bookID === bookID){
+      if (user.books[i].bookID === bookID) {
         bookFound = true;
         user.books[i].rating = ratingNumber;
       }
     }
 
     // If a previous rating does not exist, push a new one to the user's books
-    if (!bookFound){
+    if (!bookFound) {
       user.books.push(rating);
     }
 
-    user.save(function(err) {
+    user.save((err) => {
       if (err) {
+        res.status(200).send(payload('rating', {
+          message: 'Failed to save user rating' + userID
+        }));
         console.log(err);
       }
       // Return the new rating
@@ -41,21 +51,21 @@ router.get('/', (req, res, next) => {
   const userID = req.user.cid;
   const bookID = req.query.bookID;
 
-  var returnRating = 0;
-
   User.findById(userID, (err, user) => {
-    try{
-        for (var i = 0; i < user.books.length; i++) {
-        // If an entry exists, return it
-        if (user.books[i].bookID === bookID){
-          returnRating = user.books[i].rating;
-        }
-      }
-    } catch(err) {
+    if (err) {
+      res.status(200).send(payload('rating', {
+        message: 'Failed to find user for rating with ID: ' + userID
+      }));
       console.log(err);
     }
-    // Return rating
-    res.status(200).send(payload('rating', {'bookRating': returnRating}))
+
+    for (var i = 0; i < user.books.length; i++) {
+      if (user.books[i].bookID === bookID) {
+        res.status(200).send(payload('rating', {'bookRating': user.books[i].rating}));
+      }
+    }
+
+    res.status(200).send(payload('rating', {'bookRating': 0}));
   });
 });
 

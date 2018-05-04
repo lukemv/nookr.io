@@ -1,11 +1,11 @@
 <template>
-    <div id="book-shelf">
-      <div class="recommendation">
+    <div id="book-shelf" class="mx-auto">
+      <div class="recommendation mx-2">
         <h3>{{shelfTitle}}</h3>
         <hr>
-        <div class="book-thumbnail-container row">
-          
-          <div v-for="n in books.length" class="col-xs-12 col-sm-6 col-md-3">
+        <div class="book-thumbnail-container row equal mx-0">
+
+          <div v-for="n in books.length" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3">
             <span v-if="n < noOfBooks" v-bind="loadBtn = false" ></span>
             <book-thumbnail v-if="n <= noOfBooks" class="book-thumbnail" v-bind:book="books[n-1]"></book-thumbnail>
             <span v-if="n > noOfBooks" v-bind="loadBtn = true" ></span>
@@ -57,6 +57,12 @@
   .btn-load{
     margin-left: auto;
     margin-right: auto;
+  }
+  .bookcard{
+    max-width: 220px;
+  }
+  #book-shelf{
+    max-width: 1000px;
   }
 
 </style>

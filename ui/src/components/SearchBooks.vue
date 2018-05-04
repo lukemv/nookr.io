@@ -26,6 +26,20 @@
       </div>
     </div>
 
+    <!-- Not Found -->
+    <div class="col-md-8 col-lg-6 mx-auto">
+      <p v-if="!books && isSearched">
+        <b>Search returned 0 results</b>
+      </p>
+    </div>
+
+    <!-- Not Found -->
+    <div class="col-md-8 col-lg-6 mx-auto">
+      <p v-if="books && isSearched">
+        <b>Search returned {{searchResults.volumes.totalItems}} results</b>
+      </p>
+    </div>
+
     <!-- Error Messages -->
     <div class="col-md-8 col-lg-6 mx-auto">
     <div v-if="errors.length" class="alert alert-warning" role="alert">
@@ -36,6 +50,8 @@
         </ul>
       </p>
     </div>
+
+    <hr />
   </div>
 
     <!-- Book Layout -->
@@ -44,6 +60,27 @@
       <div class="row equal mx-0">
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3" v-for="book in books">
           <div class="book">
+           <div class="book-rating row">
+              <div class="col-12" >
+                <div class="stars">
+                  <span class="star"
+                  v-bind:class="[book.nookrInfo.rating >= 1 ? 'star-gold' : 'star-silver']"
+                  v-on:click="rateBook(book, 1)">&#9733;</span>
+                   <span class="star"
+                  v-bind:class="[book.nookrInfo.rating >= 2 ? 'star-gold' : 'star-silver']"
+                  v-on:click="rateBook(book, 2)">&#9733;</span>
+                   <span class="star"
+                  v-bind:class="[book.nookrInfo.rating >= 3 ? 'star-gold' : 'star-silver']"
+                  v-on:click="rateBook(book, 3)">&#9733;</span>
+                   <span class="star"
+                  v-bind:class="[book.nookrInfo.rating >= 4 ? 'star-gold' : 'star-silver']"
+                  v-on:click="rateBook(book, 4)">&#9733;</span>
+                   <span class="star"
+                  v-bind:class="[book.nookrInfo.rating == 5 ? 'star-gold' : 'star-silver']"
+                  v-on:click="rateBook(book, 5)">&#9733;</span>
+                </div>
+              </div>
+            </div>
             <div class="book-text">
               <!--To Single Book Page-->
               <!--THUMBNAIL-->
@@ -77,6 +114,7 @@
         return {
           books: [],
           errors: [],
+          searchResults: null,
           isLoading: false,
           isSearched: false,
           searchInput: '',
@@ -89,10 +127,17 @@
           this.isLoading = true
           this.$http.get(`${this.$globals.api}/books/search?q=${this.searchType}${this.searchInput}`)
             .then((res) => {
-              this.books = res.body.payload.volumes.items
+              var vol = res.body.payload.volumes
+              this.searchResults = res.body.payload
               this.isLoading = false
               this.isSearched = true
+              if (vol.totalItems === 0) {
+                this.books = null
+              } else {
+                this.books = vol.items
+              }
             }, (error) => {
+              console.log('errors' + error)
               this.isLoading = false
               this.errors = []
               this.errors.push('An error has occured, please try again.')
@@ -106,6 +151,18 @@
             this.isLoading = false
             this.errors.push('Search returned no books within the allowed timeframe.')
           }
+        },
+        rateBook: function (book, rating) {
+          console.log(`sending book rating for ${book.id}, ${rating}`)
+          this.$http.post(`${this.$globals.api}/rating`, {bookID: book.id, rating: rating})
+            .then((res) => {
+              console.log(res)
+              console.log(book)
+              book.nookrInfo.rating = res.body.payload.bookRating
+            // Update book rating here
+            }, (error) => {
+              console.log(error)
+            })
         }
       },
       watch: {
@@ -179,5 +236,24 @@
       .book-image{
         height: 250px;
         width: 175px;
+      }
+
+      .star{
+        padding-left: 3px;
+        padding-right: 3px;
+        display: inline-block;
+        font-size: 1.5em;
+        -webkit-transition: .3s; /* Safari */
+        transition: .3s;
+      }
+      .star-gold{
+        color: gold;
+      }
+      .star-grey{
+        color: rgb(207, 207, 207);
+      }
+      .star:hover{
+        transform: scale(1.5);
+        cursor:pointer;
       }
 </style>

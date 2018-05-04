@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Book = require('../models/book');
 
-const googleBooks = require('../services/googleBooks');
+const Book = require('../models/book');
+const User = require('../models/user');
 const payload = require('../models/payload');
+
+const googleBooks = require('../services/books');
 
 // GET /books/single?id=foo
 router.get('/single', (req, res, next) => {
@@ -24,46 +26,40 @@ router.get('/single', (req, res, next) => {
 
 // GET /books/search?q=foo
 router.get('/search', (req, res, next) => {
-  const q = req.query.q;
-  googleBooks.volumeQuery(q).then((volumes) => {
-    var bookList = [];
-
-    // loop through the items and make a Book and add it to the bookList
-    for (var i = 0; i < volumes.items.length; i++) {
-      var hardCodedRating = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-      var nookrInfo = ({
-        'date': new Date(),
-        // Hardcoded rating
-        'rating': hardCodedRating
-      });
-      var volume = ({
-        'nookrInfo': nookrInfo,
-        'googleInfo': volumes.items[i]
-      });
-
-      var book = new Book(volume);
-      bookList.push(book);
-    }
-
-    Book.insertMany(bookList, {
-      ordered: false
-    }).then((result) => {
-      res.status(200).send(payload('googleVolumeList', {
-        volumes
-      }));
-    }).catch((err) => {
-      if (err.code === '11000') {
-        console.log('duplicates...');
-        res.status(200).send(payload('googleVolumeList', {
-          volumes
-        }));
-      } else {
-        console.error(err);
-        // return something here to say that something went wrong.
-        res.status(500).send(payload('error', {
-          message: err.message
+  googleBooks.volumeQuery(req.query.q).then((volumes) => {
+    const userId = req.user.cid;
+    User.findById(userId, (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(200).send(payload('rating', {
+          message: 'Failed to find user with ID: ' + userId
         }));
       }
+
+      if (volumes.totalItems === 0) {
+        const pl = payload('googleVolumeList', {volumes});
+        return res.status(200).send(pl);
+      }
+
+      volumes.items = volumes.items.map((volume) => {
+        let rating = user.books.find((item) => {
+          return item.bookID === volume.id;
+        });
+
+        // yuck..
+        if (rating) {
+          rating = rating.rating;
+        }
+
+        volume.nookrInfo = {
+          rating: rating || 0
+        };
+
+        return volume;
+      });
+
+      const pl = payload('googleVolumeList', {volumes});
+      res.status(200).send(pl);
     });
   });
 });

@@ -53,19 +53,19 @@ router.get('/', (req, res, next) => {
 
   User.findById(userID, (err, user) => {
     if (err) {
-      res.status(200).send(payload('rating', {
+      console.log(err);
+      return res.status(200).send(payload('rating', {
         message: 'Failed to find user for rating with ID: ' + userID
       }));
-      console.log(err);
     }
 
     for (var i = 0; i < user.books.length; i++) {
       if (user.books[i].bookID === bookID) {
-        res.status(200).send(payload('rating', {'bookRating': user.books[i].rating}));
+        return res.status(200).send(payload('rating', {'bookRating': user.books[i].rating}));
       }
     }
 
-    res.status(200).send(payload('rating', {'bookRating': 0}));
+    return res.status(200).send(payload('rating', {'bookRating': 0}));
   });
 });
 

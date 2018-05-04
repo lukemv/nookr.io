@@ -87,7 +87,7 @@
         searchBooks: function () {
           this.errors = []
           this.isLoading = true
-          this.$http.get(`${this.$globals.api}/googleVolumeSearch?q=${this.searchType}${this.searchInput}`)
+          this.$http.get(`${this.$globals.api}/books/search?q=${this.searchType}${this.searchInput}`)
             .then((res) => {
               this.books = res.body.payload.volumes.items
               this.isLoading = false

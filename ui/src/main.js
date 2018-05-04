@@ -32,7 +32,7 @@ const globals = new Vue({
   },
   methods: {
     updateProfile: function () {
-      this.$http.get(`${this.$globals.api}/profile`).then(function (data) {
+      this.$http.get(`${this.$globals.api}/auth/profile`).then(function (data) {
         this.user = data.body.payload.user
       }, function (error) {
         console.log(error)
@@ -48,7 +48,7 @@ const globals = new Vue({
       this.updateProfile()
     },
     endSession: function () {
-      this.$http.get(`${this.$globals.api}/logoff`).then(function (data) {
+      this.$http.get(`${this.$globals.api}/auth/logoff`).then(function (data) {
         this.user = null
         this.$cookie.set(this.tokenExpiresCookieKey, null)
         this.$cookie.set(this.tokenCookieKey, null)

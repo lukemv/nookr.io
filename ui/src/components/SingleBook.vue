@@ -19,7 +19,7 @@
             </span>
             </div>
           </div>
-          
+
           <!-- <div v-else class="user-rating col-6">
             <router-link :to="{ name: 'Login' }">Login</router-link> or
             <router-link :to="{ name: 'Register' }">Register</router-link> to Rate a Book</div> -->
@@ -51,7 +51,7 @@
     },
     methods: {
       searchBooks: function () {
-        this.$http.get(`${this.$globals.api}/singleBook?id=` + this.bookID)
+        this.$http.get(`${this.$globals.api}/books/single?id=` + this.bookID)
           .then((res) => {
             this.book = res.body.payload.book.googleInfo
             this.nookrInfo = res.body.payload.book.nookrInfo
@@ -60,7 +60,7 @@
           })
       },
       getUserRating: function () {
-        this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
+        this.$http.get(`${this.$globals.api}/rating?bookID=` + this.bookID)
           .then((res) => {
             // Get the rating back from the database and set it to view
             this.goldStars = res.body.payload.bookRating
@@ -75,7 +75,7 @@
           })
       },
       rateBook: function (rating) {
-        this.$http.get(`${this.$globals.api}/addRating?bookID=` + this.bookID + `&rating=` + rating)
+        this.$http.post(`${this.$globals.api}/rating`, {bookID: this.bookID, rating: rating})
           .then((res) => {
             // Get the rating back from the database and set it to view
             this.getUserRating()
@@ -166,7 +166,7 @@
     margin-right: 10px;
     margin-top: 8px;
   }
- 
+
   .description{
     margin-top: 30px;
   }

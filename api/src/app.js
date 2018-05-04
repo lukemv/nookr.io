@@ -5,8 +5,10 @@ const express = require('express');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const jwt = require('express-jwt');
 
-const payload = require('./payload');
+const config = require('./services/config');
+const payload = require('./models/payload');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
@@ -28,8 +30,8 @@ const redisOptions = {
   port: redisPort
 };
 
-const session = require('./session')(redisOptions);
-require('./passport')(passport, session);
+const session = require('./services/session')(redisOptions);
+require('./services/passport')(passport, session);
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -37,7 +39,39 @@ app.use(function(req, res, next) {
   next();
 });
 
-require('./routes.js')(app, passport, session);
+// Enforce JWT middleware with whitelisted routes.
+const authWhitelist = {
+  path: [
+    '/auth/health',
+    '/auth/register',
+    '/auth/login',
+  ]
+};
+
+const isRevokedCallback = (req, payload, done) => {
+  const issuer = payload.iss;
+  const userId = payload.cid;
+  const jti = payload.jti;
+  session.isRevoked(issuer, userId, jti, done);
+}
+
+app.use(jwt({
+  secret: config.jwtSecret,
+  isRevoked: isRevokedCallback
+}).unless(authWhitelist));
+// End of JWT middleware
+
+// Routes Begin
+const healthRouter = require('./routes/health');
+const authRouter = require('./routes/auth');
+const booksRouter = require('./routes/books');
+const ratingRouter = require('./routes/rating');
+app.use('/books', booksRouter);
+app.use('/health', healthRouter);
+app.use('/auth', authRouter(passport, session));
+app.use('/rating', ratingRouter);
+// Routes End
+
 
 // Handle unauthorized requests here.
 // It's important that method's with
@@ -50,5 +84,4 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(port, host);
-
 console.log(`Running on http://${host}:${port}`);

@@ -32,7 +32,7 @@
           var book = {title: '', coverImage: ''}
           this.loading = true
           // Hit our API and get a single book object.
-          this.$http.get(`${this.$globals.api}/singleBook?id=` + bookID)
+          this.$http.get(`${this.$globals.api}/books/single?id=` + bookID)
             .then((response) => {
               this.loading = false
               book['title'] = (response.body.payload.book.googleInfo.volumeInfo.title)
@@ -57,10 +57,10 @@
         this.getBook(this.recommended, 'vWCqCVvluioC')
         this.getBook(this.recommended, 'ttuJAgAAQBAJ')
         // Populate  trending list, currently selects max 12 random trending books each time
-        this.$http.get(`${this.$globals.api}/trending`)
+        this.$http.get(`${this.$globals.api}/books/trending`)
           .then(this.getTrendingBooks)
           .then((output) => {
-            return this.$http.get(`${this.$globals.api}/trending`)
+            return this.$http.get(`${this.$globals.api}/books/trending`)
           })
           .then((output) => {
             // Randomly selects a number of trending books, TODO, sort by date or some other variable

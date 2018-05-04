@@ -162,7 +162,8 @@ export default {
     submit: function (event) {
       this.isLoading = true
       this.errorMessage = this.successMessage = ''
-      this.$http.post(`${this.$globals.api}/register`, {email: this.email, password: this.password}).then(function (res) {
+      this.$http.post(`${this.$globals.api}/auth/register`,
+        {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'signupSuccess') {
           this.successMessage = res.body.payload.message
           this.$globals.startSession(res.body.payload)

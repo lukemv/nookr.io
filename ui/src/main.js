@@ -77,12 +77,11 @@ Vue.http.interceptors.push(function (request) {
 Vue.http.interceptors.push(function (request, next) {
   next(function (response) {
     if (response.status === 401) {
+      console.log('Global Intercept [401] Ending session')
       this.$router.push('/session-end')
     }
   })
 })
-
-console.log(`API: ${Vue.prototype.$baseUrl}`)
 
 /* eslint-disable no-new */
 new Vue({

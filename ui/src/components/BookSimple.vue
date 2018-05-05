@@ -1,0 +1,33 @@
+<template>
+  <div class="book-text">
+    <div class="thumbnail book-thumb">
+      <div v-if="book.volumeInfo.imageLinks">
+        <img class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
+      </div>
+      <div v-if="!book.volumeInfo.imageLinks">
+        <div class="book-image placeholder-img text-center">
+          <p>Image Not available</p>
+        </div>
+      </div>
+      <book-rating v-bind:book="book"></book-rating>
+      <div class="caption">
+        <router-link :to="{ path: 'book-detail', query: { id: book.id }}">
+          <div class="book-title">{{book.volumeInfo.title}}</div>
+        </router-link>
+        <div class="mb-3">
+          <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
+        </div>
+        <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import BookRating from './BookRating'
+  export default {
+    name: 'book-simple',
+    props: ['book'],
+    components: {BookRating}
+  }
+</script>

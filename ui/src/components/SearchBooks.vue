@@ -56,30 +56,7 @@
       <div id="container-fluid">
         <div class="row equal mx-0">
           <div v-if="books" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3" v-for="book in books">
-            <div class="book">
-              <div class="book-text">
-                <div class="thumbnail book-thumb">
-                  <div v-if="book.volumeInfo.imageLinks">
-                    <img class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
-                  </div>
-                  <div v-if="!book.volumeInfo.imageLinks">
-                    <div class="book-image placeholder-img text-center">
-                      <p>Image Not available</p>
-                    </div>
-                  </div>
-                  <book-rating v-bind:book="book"></book-rating>
-                  <div class="caption">
-                    <router-link :to="{ path: 'book', query: { id: book.id }}">
-                      <div class="book-title">{{book.volumeInfo.title}}</div>
-                    </router-link>
-                    <div class="mb-3">
-                      <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
-                    </div>
-                    <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <book-simple v-bind:book="book"></book-simple>
           </div>
         </div>
       </div>
@@ -88,10 +65,10 @@
 </template>
 
 <script>
-  import BookRating from './BookRating'
+  import BookSimple from './BookSimple'
   export default {
     name: 'search-books',
-    components: {BookRating},
+    components: {BookSimple},
     data () {
       return {
         books: [],

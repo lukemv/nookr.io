@@ -2,7 +2,7 @@
   <div v-if="book" class="container-fluid">
     <div class="mt-3">
       <a href="" @click="$router.go(-1)">Back to Search Results</a>
-      <pre> ^^ This does not work, use the browser back button for now</pre>
+      <pre> ^^ This does not work, please use the browser back button ¯\_(ツ)_/¯</pre>
     </div>
     <header>
       <h2>{{book.volumeInfo.title}}</h2>
@@ -50,7 +50,7 @@
 <script>
   import BookRating from './BookRating'
   export default {
-    name: 'book',
+    name: 'book-detail',
     components: {BookRating},
     data () {
       return {

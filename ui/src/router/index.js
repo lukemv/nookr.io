@@ -7,7 +7,7 @@ import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
 import NYBooks from '@/components/NYBooks'
-import SingleBook from '@/components/SingleBook'
+import BookDetail from '@/components/BookDetail'
 import SessionEnd from '@/components/SessionEnd'
 
 Vue.use(Router)
@@ -51,9 +51,9 @@ export default new Router({
       component: NYBooks
     },
     {
-      path: '/book',
-      name: 'SingleBook',
-      component: SingleBook
+      path: '/book-detail',
+      name: 'BookDetail',
+      component: BookDetail
     },
     {
       path: '/session-end',

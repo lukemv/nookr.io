@@ -122,6 +122,8 @@
     },
     methods: {
       searchBooks: function () {
+        clearTimeout(this.timeout)
+
         this.books = []
         this.errors = []
         this.isLoading = true
@@ -158,7 +160,7 @@
           })
         // Timeout will display a generic error
         // if the HTTP request takes too long.
-        setTimeout(this.timeoutBooks, 10000)
+        this.timeout = setTimeout(this.timeoutBooks, 10000)
       },
       timeoutBooks: function () {
         if (this.isLoading) {

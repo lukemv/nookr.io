@@ -17,10 +17,10 @@ module.exports = {
           console.error(err);
         }
         if (cacheHit !== null) {
-          console.log('Cache hit!');
+          console.log('[cache] volume query HIT');
           return resolve(JSON.parse(cacheHit));
         }
-        console.log('Cache miss!');
+        console.log('[cache] volume query MISS');
         const url = `https://www.googleapis.com/books/v1/volumes?${queryString}`;
         axios.get(url).then((res) => {
           // Cache query for fast duplicate search results.
@@ -33,10 +33,28 @@ module.exports = {
     });
   },
   volume: (query) => {
-    const url = `https://www.googleapis.com/books/v1/volumes/${query}`;
     return new Promise((resolve, reject) => {
-      axios.get(url).then((res) => {
-        resolve(res.data);
+      redisClient.get(`queries:single:${query}`, (err, cacheHit) => {
+        if (err) {
+          console.error('Redis cache error occured');
+          console.error(err);
+        }
+        if (cacheHit !== null) {
+          console.log('[cache] single query HIT');
+          return resolve(JSON.parse(cacheHit));
+        }
+        console.log('[cache] single query MISS');
+        const url = `https://www.googleapis.com/books/v1/volumes/${query}`;
+        axios.get(url).then((res) => {
+          // Cache query for fast duplicate search results.
+          redisClient.set(`queries:single:${query}`,
+            JSON.stringify(res.data), 'EX', 500);
+
+          return resolve(res.data);
+        }, (err) => {
+          console.error('Single query Google Books error');
+          reject(err);
+        });
       });
     });
   }

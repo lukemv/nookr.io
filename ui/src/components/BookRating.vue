@@ -21,11 +21,9 @@
           bookID: book.id,
           rating: rating
         }).then((res) => {
-          console.log(res)
-          console.log(book)
           book.nookrInfo.rating = res.body.payload.bookRating
-          // Update book rating here
         }, (error) => {
+          // Todo: Be more pro-active here
           console.log(error)
         })
       }

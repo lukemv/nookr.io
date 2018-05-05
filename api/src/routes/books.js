@@ -10,17 +10,34 @@ const googleBooks = require('../services/books');
 // GET /books/single?id=foo
 router.get('/single', (req, res, next) => {
   const id = req.query.id;
-  Book.findOne({
-    'googleInfo.id': id
-  }, function (err, book) {
-    if (err) {
-      res.status(404).send(payload('info', {
-        message: 'book not found'
-      }));
-    }
-    res.status(200).send(payload('book', {
-      book
-    }));
+  googleBooks.volume(id).then((volume) => {
+    const userId = req.user.cid;
+    User.findById(userId, (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(200).send(payload('error', {
+          message: 'Failed to find user with ID: ' + userId
+        }));
+      }
+
+      let rating = user.books.find((item) => {
+        return item.bookID === volume.id;
+      });
+
+      // yuck..
+      if (rating) {
+        rating = rating.rating;
+      }
+
+      volume.nookrInfo = {
+        rating: rating || 0
+      };
+
+      const pl = payload('googleVolumeSingle', {volume});
+      res.status(200).send(pl);
+    });
+  }, (err) => {
+    return res.status(err.response.status).send(err.message);
   });
 });
 
@@ -34,7 +51,7 @@ router.get('/search', (req, res, next) => {
     User.findById(userId, (err, user) => {
       if (err) {
         console.log(err);
-        return res.status(200).send(payload('rating', {
+        return res.status(200).send(payload('error', {
           message: 'Failed to find user with ID: ' + userId
         }));
       }

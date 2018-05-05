@@ -198,28 +198,6 @@
         if (this.isSearched) {
           this.searchFromInput()
         }
-      },
-      computed: {
-        // This is needed because some text snippets contain HTML. - https://vuejs.org/v2/guide/computed.html
-        removeHTMLTagsFromTextSnippetIfPresent (textSnippet) {
-          // The patterns are needed to remove the HTML, and the test is needed because some text won't return when passed into this function. https://stackoverflow.com/questions/37623982/how-to-remove-html-tags-from-json-output
-          let pattern1 = /<[^>]+>/gm
-          let pattern2 = /&nbsp;/g
-          let pattern3 = /&rsquo;/
-          let pattern4 = /(&ldquo;)|(&rdquo;)/g
-          if (pattern1.test(textSnippet) ||
-            pattern2.test(textSnippet) ||
-            pattern3.test(textSnippet) ||
-            pattern4.test(textSnippet)) {
-            return textSnippet.replace(/<[^>]+>/gm, ' ')
-              .replace(/&nbsp;/g, ' ')
-              .replace(/&rsquo;/, '\'')
-              .replace(/(&ldquo;)|(&rdquo;)/g, '"')
-              .replace(/\s+/, ' ')
-          } else {
-            return textSnippet
-          }
-        }
       }
     }
   }

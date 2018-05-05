@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     redirect: function () {
-      this.$router.push('/book-list')
+      this.$router.push('/browse')
     },
     submit: function (event) {
       this.isLoading = true

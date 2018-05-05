@@ -16,8 +16,21 @@
         </router-link>
         <div class="mb-3">
           <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
+          <div v-if="book.volumeInfo.industryIdentifiers">
+            <div v-if="book.volumeInfo.industryIdentifiers.length > 0">
+              <small>{{book.volumeInfo.industryIdentifiers[0].type}}:
+                {{book.volumeInfo.industryIdentifiers[0].identifier}}</small>
+            </div>
+            <div v-if="book.volumeInfo.industryIdentifiers.length > 1">
+              <small>{{book.volumeInfo.industryIdentifiers[1].type}}:
+                {{book.volumeInfo.industryIdentifiers[1].identifier}}</small>
+            </div>
+            <div v-if="book.volumeInfo.industryIdentifiers.length > 2">
+              <small>{{book.volumeInfo.industryIdentifiers[2].type}}:
+                {{book.volumeInfo.industryIdentifiers[2].identifier}}</small>
+            </div>
+          </div>
         </div>
-        <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
       </div>
     </div>
   </div>

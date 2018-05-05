@@ -19,5 +19,8 @@ module.exports = {
   },
   bestRated: () => {
     return raccoon.bestRated();
+  },
+  recommendFor: (user, nRecs) => {
+    return raccoon.reccommendFor(user, nRecs);
   }
 };

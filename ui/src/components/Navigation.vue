@@ -4,10 +4,10 @@
     <span class="navbar-text">
       <ul class="nav">
         <li v-if="hasAuth" class="ml-1 pl-2">
-          <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
+          <router-link :to="{ name: 'BrowseBooks' }">Browse</router-link>
         </li>
         <li v-if="hasAuth" class="ml-1 pl-2">
-          <router-link :to="{ name: 'BrowseBooks' }">Browse</router-link>
+          <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
         </li>
         <li class="ml-1 pl-2" v-if="!('Register' === $route.name) && !hasAuth">
           <router-link class="btn btn-outline-light" :to="{ name: 'Register' }">Register</router-link>

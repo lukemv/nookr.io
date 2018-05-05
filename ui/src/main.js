@@ -35,7 +35,7 @@ const globals = new Vue({
       this.$http.get(`${this.$globals.api}/auth/profile`).then(function (data) {
         this.user = data.body.payload.user
       }, function (error) {
-        console.log(error)
+        console.error(error)
       })
     },
     startSession: function (payload) {

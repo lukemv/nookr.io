@@ -1,12 +1,12 @@
 <template>
   <div class="search-wrapper">
     <div class="row mx-auto">
-      <div class="col-md-8 col-lg-6 mx-auto mb-4">
+      <div class="col-md-8 col-lg-6 mb-4">
         <h4>nookr browse <small class="poweredby">Powered by Google Books</small>
           <icon v-if="isLoading" class="fa-spin" name="sync"></icon>
         </h4>
         <button v-on:click="setContext('bestRated')" class="btn btn-success">Best Rated</button>
-        <button v-on:click="setContext('recommendedFor')" class="btn btn-info" disabled>Recommended</button>
+        <button v-on:click="setContext('recommendedFor')" class="btn btn-info" disabled>Recommended (Coming Soon)</button>
       </div>
     </div>
     <main id="browse-list" class="mx-auto">
@@ -52,15 +52,7 @@
 
 <style>
   .search-wrapper {
-    margin-top: 50px;
-  }
-
-  .search-types input {
-    margin-left: 10px;
-  }
-
-  #search-list {
-    max-width: 1000px;
+    margin-top: 20px;
   }
 
   .book {

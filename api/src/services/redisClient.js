@@ -1,4 +1,5 @@
 const redis = require('redis');
+const log = require('./logger');
 
 module.exports = (redisOptions) => {
   const client = redis.createClient(
@@ -6,7 +7,7 @@ module.exports = (redisOptions) => {
     redisOptions.host);
 
   client.on('error', function (err) {
-    console.log('RedisError:' + err);
+    log.error(err, 'redis');
   });
 
   return client;

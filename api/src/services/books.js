@@ -1,4 +1,5 @@
 const axios = require('axios');
+const log = require('../services/logger');
 
 const redisOptions = {
   host: process.env.RedisHost,
@@ -13,21 +14,26 @@ module.exports = {
     return new Promise((resolve, reject) => {
       redisClient.get(`queries:volumes:${queryString}`, (err, cacheHit) => {
         if (err) {
-          console.error('Redis cache error occured');
-          console.error(err);
+          log.error('Redis cache error occured');
+          log.error(err);
         }
         if (cacheHit !== null) {
-          console.log('[cache] volume query HIT');
+          log.info(`Volume query HIT ${queryString}`, 'cache');
           return resolve(JSON.parse(cacheHit));
         }
-        console.log('[cache] volume query MISS');
+
+        log.info(`Volume query MISS ${queryString}`, 'cache');
         const url = `https://www.googleapis.com/books/v1/volumes?${queryString}`;
         axios.get(url).then((res) => {
           // Cache query for fast duplicate search results.
           redisClient.set(`queries:volumes:${queryString}`,
-            JSON.stringify(res.data), 'EX', 500);
+            JSON.stringify(res.data), 'EX', 259200);
 
           return resolve(res.data);
+        }, (err) => {
+          log.error('Volume query Google Books error');
+          log.error(err);
+          reject(err);
         });
       });
     });
@@ -36,23 +42,25 @@ module.exports = {
     return new Promise((resolve, reject) => {
       redisClient.get(`queries:single:${query}`, (err, cacheHit) => {
         if (err) {
-          console.error('Redis cache error occured');
-          console.error(err);
+          log.error('Redis cache error occured');
+          log.error(err);
         }
         if (cacheHit !== null) {
-          console.log(`[cache] single query HIT ${query}`);
+          log.info(`Volume query HIT ${query}`, 'cache');
           return resolve(JSON.parse(cacheHit));
         }
-        console.log(`[cache] single query MISS ${query}`);
+
+        log.info(`Volume query MISS ${query}`, 'cache');
         const url = `https://www.googleapis.com/books/v1/volumes/${query}`;
         axios.get(url).then((res) => {
           // Cache query for fast duplicate search results.
           redisClient.set(`queries:single:${query}`,
-            JSON.stringify(res.data), 'EX', 500);
+            JSON.stringify(res.data), 'EX', 259200);
 
           return resolve(res.data);
         }, (err) => {
-          console.error('Single query Google Books error');
+          log.error('Single query Google Books error');
+          log.error(err);
           reject(err);
         });
       });

@@ -5,6 +5,7 @@ const express = require('express');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const log = require('./services/logger');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
@@ -65,4 +66,4 @@ app.use(errorHandler);
 // End Middleware (Called Last)
 
 app.listen(port, host);
-console.log(`Running on http://${host}:${port}`);
+log.info(`Running on http://${host}:${port}`);

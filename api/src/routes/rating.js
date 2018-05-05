@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const recommender = require('../services/recommender');
+const log = require('../services/logger');
 
 const payload = require('../models/payload');
 
@@ -16,7 +17,7 @@ router.post('/', (req, res, next) => {
       res.status(200).send(payload('rating', {
         message: 'Failed to find user for rating with ID: ' + userID
       }));
-      console.log(err);
+      log.error(err);
     }
 
     const rating = {bookID: bookID, rating: ratingNumber};
@@ -39,7 +40,7 @@ router.post('/', (req, res, next) => {
         res.status(200).send(payload('rating', {
           message: 'Failed to save user rating' + userID
         }));
-        console.log(err);
+        log.error(err);
       }
 
       // console.log(raccoon.config); // doesn't seem to use this config.. ¯\_(ツ)_/¯
@@ -65,7 +66,7 @@ router.get('/', (req, res, next) => {
 
   User.findById(userID, (err, user) => {
     if (err) {
-      console.log(err);
+      log.error(err);
       return res.status(200).send(payload('rating', {
         message: 'Failed to find user for rating with ID: ' + userID
       }));

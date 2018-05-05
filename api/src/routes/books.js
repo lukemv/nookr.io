@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const log = require('../services/logger');
 
 const Book = require('../models/book');
 const User = require('../models/user');
@@ -15,7 +16,7 @@ router.get('/single', (req, res, next) => {
     const userId = req.user.cid;
     User.findById(userId, (err, user) => {
       if (err) {
-        console.log(err);
+        log.error(err, 'routes/books');
         return res.status(200).send(payload('error', {
           message: 'Failed to find user with ID: ' + userId
         }));
@@ -51,7 +52,7 @@ router.get('/search', (req, res, next) => {
     const userId = req.user.cid;
     User.findById(userId, (err, user) => {
       if (err) {
-        console.log(err);
+        log.error(err, '/books/search');
         return res.status(200).send(payload('error', {
           message: 'Failed to find user with ID: ' + userId
         }));
@@ -102,7 +103,7 @@ router.get('/bestRated', (req, res, next) => {
       const userId = req.user.cid;
       User.findById(userId, (err, user) => {
         if (err) {
-          console.log(err);
+          log.error(err, '/books/bestRated');
           return res.status(200).send(payload('error', {
             message: 'Failed to find user with ID: ' + userId
           }));

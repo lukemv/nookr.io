@@ -1,7 +1,7 @@
 <template>
   <div class="search-wrapper">
     <div class="row mx-auto">
-      <div class="col-md-8 col-lg-6 mx-auto mb-4">
+      <div class="col-md-6 col-lg-6 col-sm-12 mb-4">
         <h4>nookr search <small class="poweredby">Powered by Google Books</small>
           <icon v-if="isLoading" class="fa-spin" name="sync"></icon>
         </h4>
@@ -24,20 +24,6 @@
       </div>
     </div>
 
-    <!-- Not Found -->
-    <div class="col-md-8 col-lg-6 mx-auto">
-      <p v-if="!books && isSearched">
-        <b>Search returned 0 results</b>
-      </p>
-    </div>
-
-    <!-- Not Found -->
-    <div class="col-md-8 col-lg-6 mx-auto">
-      <p v-if="books && isSearched">
-        <b>Search returned {{searchResults.volumes.totalItems}} results</b>
-      </p>
-    </div>
-
     <!-- Error Messages -->
     <div class="col-md-8 col-lg-6 mx-auto">
       <div v-if="errors.length" class="alert alert-warning" role="alert">
@@ -48,14 +34,17 @@
           </ul>
         </p>
       </div>
-      <hr />
     </div>
 
-    <!-- Book Layout -->
-    <main id="search-list" class="mx-auto">
+    <main v-if="books.length > 0 && !isLoading" id="search-list" class="mx-auto">
       <div id="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 ml-4">
+            <strong>Showing {{startIndex + 1}} to {{startIndex + maxResults}} of {{totalItems}} Results</strong>
+          </div>
+        </div>
         <div class="row equal mx-0">
-          <div v-if="books" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3" v-for="book in books">
+          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3" v-for="book in books">
             <book-simple v-bind:book="book"></book-simple>
           </div>
         </div>
@@ -73,13 +62,10 @@
       return {
         books: [],
         errors: [],
-        searchResults: null,
         isLoading: false,
-        isSearched: false,
         searchInput: '',
-        searchType: '',
-        // Google Volumes List
-        currentPage: 0,
+        startIndex: 0,
+        totalItems: 0,
         maxResults: 40,
         orderBy: 'relevance',
         projection: 'full'
@@ -91,6 +77,7 @@
 
         this.books = []
         this.errors = []
+        this.totalItems = 0
         this.isLoading = true
 
         let url = `${this.$globals.api}/books/search?${queryString}`
@@ -105,6 +92,7 @@
             }
 
             var payload = res.body.payload
+            this.totalItems = payload.volumes.totalItems
             if (payload.volumes.totalItems > 0) {
               this.books = payload.volumes.items
             }
@@ -118,19 +106,13 @@
         this.timeout = setTimeout(this.timeoutBooks, 10000)
       },
       searchFromInput: function () {
-        let startIndex = this.currentPage * this.maxResults
-
         let queryString = `q=${this.searchInput}`
         queryString += `&maxResults=${this.maxResults}`
         queryString += `&projection=${this.projection}`
-
-        if (startIndex > 0) {
-          queryString += `&startIndex=${startIndex}`
-        }
+        queryString += `&startIndex=${this.startIndex}`
 
         console.log('pushing URL: ' + '/search' + queryString)
         this.$router.push(`/search?${queryString}`)
-        this.searchFromQuery(queryString)
       },
       timeoutBooks: function () {
         if (this.isLoading) {
@@ -163,15 +145,7 @@
 
 <style>
   .search-wrapper {
-    margin-top: 50px;
-  }
-
-  .search-types input {
-    margin-left: 10px;
-  }
-
-  #search-list {
-    max-width: 1000px;
+    margin-top: 20px;
   }
 
   .book {

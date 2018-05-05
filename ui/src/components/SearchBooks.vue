@@ -7,7 +7,8 @@
         </h4>
         <form class="form" v-on:submit.prevent>
           <div class="form-group">
-            <input @keyup.enter="searchBooks()"
+            <input @keyup.enter="searchFromInput()"
+              tabindex="1"
               type="text"
               v-model="searchInput"
               :disabled="isLoading"
@@ -17,7 +18,7 @@
             <button type="button"
               class="btn btn-primary"
               :disabled="isLoading || !searchInput"
-              v-on:click="searchBooks()">Search</button>
+              v-on:click="searchFromInput()">Search</button>
           </div>
         </form>
       </div>
@@ -117,28 +118,20 @@
       }
     },
     mounted: function () {
-      console.log('mounted was called')
-      console.log(this.$route.query)
+      var queryString = this.$route.fullPath.split('?')[1]
+      if (typeof queryString === 'string') {
+        this.searchFromQuery(queryString)
+      }
     },
     methods: {
-      searchBooks: function () {
+      searchFromQuery: function (queryString) {
         clearTimeout(this.timeout)
 
         this.books = []
         this.errors = []
         this.isLoading = true
 
-        const startIndex = this.currentPage * this.maxResults
-
-        let queryString = `?q=${this.searchInput}`
-        queryString += `&maxResults=${this.maxResults}`
-        queryString += `&projection=${this.projection}`
-
-        if (startIndex > 0) {
-          queryString += `&startIndex=${startIndex}`
-        }
-
-        let url = `${this.$globals.api}/books/search${queryString}`
+        let url = `${this.$globals.api}/books/search?${queryString}`
 
         this.$http.get(url)
           .then(function (res) {
@@ -161,6 +154,21 @@
         // Timeout will display a generic error
         // if the HTTP request takes too long.
         this.timeout = setTimeout(this.timeoutBooks, 10000)
+      },
+      searchFromInput: function () {
+        let startIndex = this.currentPage * this.maxResults
+
+        let queryString = `q=${this.searchInput}`
+        queryString += `&maxResults=${this.maxResults}`
+        queryString += `&projection=${this.projection}`
+
+        if (startIndex > 0) {
+          queryString += `&startIndex=${startIndex}`
+        }
+
+        console.log('pushing URL: ' + '/search' + queryString)
+        this.$router.push(`/search?${queryString}`)
+        this.searchFromQuery(queryString)
       },
       timeoutBooks: function () {
         if (this.isLoading) {
@@ -188,7 +196,7 @@
       // if there has been a previous search, the results are updated if the radio buttons are changed
       searchType: function () {
         if (this.isSearched) {
-          this.searchBooks()
+          this.searchFromInput()
         }
       },
       computed: {

@@ -2,7 +2,7 @@
   <div v-if="book" class="container-fluid">
     <div class="mt-3">
       <a href="" @click="$router.go(-1)">Back to Search Results</a>
-      <pre> ^^ This does not work</pre>
+      <pre> ^^ This does not work, use the browser back button for now</pre>
     </div>
     <header>
       <h2>{{book.volumeInfo.title}}</h2>
@@ -22,15 +22,23 @@
           <span>Language: <strong>{{book.volumeInfo.language}}</strong></span><br />
         </div>
         <hr />
-        <div class="description">
+        <div v-if="book.volumeInfo.description" class="description">
           <p><strong>Description:</strong><br />
           {{book.volumeInfo.description.replace(/<\/?[^>]+(>|$)/g, "")}}
           </p>
         </div>
+        <div v-if="!book.volumeInfo.description" class="description">
+          <p><strong>Description:</strong><br />
+          There is currently no description available for this book
+          </p>
+        </div>
+
       </div>
     </div>
-    <hr />
-    <pre><code>{{book.volumeInfo}}</code></pre>
+    <div class="mt-5">
+      <hr />
+      <pre><code>{{book.volumeInfo}}</code></pre>
+    </div>
   </div>
 </template>
 

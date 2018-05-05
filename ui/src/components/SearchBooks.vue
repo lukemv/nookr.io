@@ -117,12 +117,6 @@
         projection: 'full'
       }
     },
-    mounted: function () {
-      var queryString = this.$route.fullPath.split('?')[1]
-      if (typeof queryString === 'string') {
-        this.searchFromQuery(queryString)
-      }
-    },
     methods: {
       searchFromQuery: function (queryString) {
         clearTimeout(this.timeout)
@@ -192,11 +186,22 @@
           })
       }
     },
+    mounted: function () {
+      var queryString = this.$route.fullPath.split('?')[1]
+      if (typeof queryString === 'string') {
+        this.searchFromQuery(queryString)
+        this.searchInput = this.$route.query.q
+      }
+    },
     watch: {
-      // if there has been a previous search, the results are updated if the radio buttons are changed
-      searchType: function () {
-        if (this.isSearched) {
-          this.searchFromInput()
+      // Todo: Make this DRY
+      '$route': function (newPath) {
+        var queryString = newPath.fullPath.split('?')[1]
+        if (typeof queryString === 'string') {
+          this.searchInput = newPath.query.q
+          this.searchFromQuery(queryString)
+        } else {
+          this.books = []
         }
       }
     }

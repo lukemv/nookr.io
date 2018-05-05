@@ -10,7 +10,12 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="book-image">
-          <img v-bind:src="book.volumeInfo.imageLinks.medium" alt="book thumbnail">
+          <img v-if="book.volumeInfo.imageLinks" v-bind:src="book.volumeInfo.imageLinks.medium">
+          <div v-if="!book.volumeInfo.imageLinks">
+            <div class="placeholder-img text-center">
+              <p>Image Not available</p>
+            </div>
+          </div>
           <book-rating v-bind:book="book"></book-rating>
         </div>
       </div>
@@ -79,5 +84,11 @@
 
   .book-image img {
     width: 100%;
+  }
+
+  .placeholder-img {
+    padding-top: 100px;
+    background-color: #2B948F;
+    color: #FFF;
   }
 </style>

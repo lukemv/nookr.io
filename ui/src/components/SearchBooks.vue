@@ -57,7 +57,6 @@
         <div class="row equal mx-0">
           <div v-if="books" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 bookcard mx-auto mb-3 mt-3" v-for="book in books">
             <div class="book">
-
               <div class="book-text">
                 <div class="thumbnail book-thumb">
                   <div v-if="book.volumeInfo.imageLinks">
@@ -65,20 +64,10 @@
                   </div>
                   <div v-if="!book.volumeInfo.imageLinks">
                     <div class="book-image placeholder-img text-center">
-                      <p >Image Not available</p>
+                      <p>Image Not available</p>
                     </div>
                   </div>
-                  <!-- Stars goes here -->
-                  <div class="book-rating">
-                    <div class="stars text-center">
-                      <span class="star" v-bind:class="[book.nookrInfo.rating >= 1 ? 'star-gold' : 'star-silver']" v-on:click="rateBook(book, 1)">&#9733;</span>
-                      <span class="star" v-bind:class="[book.nookrInfo.rating >= 2 ? 'star-gold' : 'star-silver']" v-on:click="rateBook(book, 2)">&#9733;</span>
-                      <span class="star" v-bind:class="[book.nookrInfo.rating >= 3 ? 'star-gold' : 'star-silver']" v-on:click="rateBook(book, 3)">&#9733;</span>
-                      <span class="star" v-bind:class="[book.nookrInfo.rating >= 4 ? 'star-gold' : 'star-silver']" v-on:click="rateBook(book, 4)">&#9733;</span>
-                      <span class="star" v-bind:class="[book.nookrInfo.rating == 5 ? 'star-gold' : 'star-silver']" v-on:click="rateBook(book, 5)">&#9733;</span>
-                    </div>
-                  </div>
-
+                  <book-rating v-bind:book="book"></book-rating>
                   <div class="caption">
                     <router-link :to="{ path: 'book', query: { id: book.id }}">
                       <div class="book-title">{{book.volumeInfo.title}}</div>
@@ -99,8 +88,10 @@
 </template>
 
 <script>
+  import BookRating from './BookRating'
   export default {
     name: 'search-books',
+    components: {BookRating},
     data () {
       return {
         books: [],
@@ -169,21 +160,6 @@
           this.isLoading = false
           this.errors.push('The search timed out. Please try again')
         }
-      },
-      rateBook: function (book, rating) {
-        console.log(`sending book rating for ${book.id}, ${rating}`)
-        this.$http.post(`${this.$globals.api}/rating`, {
-          bookID: book.id,
-          rating: rating
-        })
-          .then((res) => {
-            console.log(res)
-            console.log(book)
-            book.nookrInfo.rating = res.body.payload.bookRating
-            // Update book rating here
-          }, (error) => {
-            console.log(error)
-          })
       }
     },
     mounted: function () {
@@ -260,29 +236,6 @@
     padding-top: 100px;
     background-color: #2B948F;
     color: #FFF;
-  }
-
-  .star {
-    padding-left: 3px;
-    padding-right: 3px;
-    display: inline-block;
-    font-size: 1.5em;
-    -webkit-transition: .3s;
-    /* Safari */
-    transition: .3s;
-  }
-
-  .star-gold {
-    color: gold;
-  }
-
-  .star-grey {
-    color: rgb(207, 207, 207);
-  }
-
-  .star:hover {
-    transform: scale(1.5);
-    cursor: pointer;
   }
 
   .poweredby {

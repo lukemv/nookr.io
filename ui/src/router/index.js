@@ -6,6 +6,7 @@ import Register from '@/components/Register'
 import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
+import BrowseBooks from '@/components/BrowseBooks'
 import NYBooks from '@/components/NYBooks'
 import BookDetail from '@/components/BookDetail'
 import SessionEnd from '@/components/SessionEnd'
@@ -44,6 +45,11 @@ export default new Router({
       path: '/search',
       name: 'SearchBooks',
       component: SearchBooks
+    },
+    {
+      path: '/browse',
+      name: 'BrowseBooks',
+      component: BrowseBooks
     },
     {
       path: '/NYBooks',

@@ -40,10 +40,10 @@ module.exports = {
           console.error(err);
         }
         if (cacheHit !== null) {
-          console.log('[cache] single query HIT');
+          console.log(`[cache] single query HIT ${query}`);
           return resolve(JSON.parse(cacheHit));
         }
-        console.log('[cache] single query MISS');
+        console.log(`[cache] single query MISS ${query}`);
         const url = `https://www.googleapis.com/books/v1/volumes/${query}`;
         axios.get(url).then((res) => {
           // Cache query for fast duplicate search results.

@@ -5,7 +5,6 @@ const express = require('express');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const raccoon = require('raccoon');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
@@ -14,13 +13,6 @@ const port = (env === 'prod' || env === 'uat' || env === 'docker') ? 80 : 8081;
 process.env.MongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
 process.env.RedisHost = process.env.RedisHost || 'localhost';
 process.env.RedisPort = process.env.RedisPort || 6379;
-
-// Set raccoon environment variables
-process.env.RACCOON_REDIS_URL = process.env.RedisHost;
-process.env.RACCOON_REDIS_PORT = process.env.RedisPort;
-raccoon.config.nearestNeighbors = 3;
-raccoon.config.className = 'books';
-raccoon.config.numOfRecsStore = 5;
 
 const app = express();
 
@@ -64,7 +56,7 @@ const ratingRouter = require('./routes/rating');
 app.use('/books', booksRouter);
 app.use('/health', healthRouter);
 app.use('/auth', authRouter(passport, session));
-app.use('/rating', ratingRouter(raccoon));
+app.use('/rating', ratingRouter);
 // End Routes (Called Second)
 
 // Start Middleware (Called Last)

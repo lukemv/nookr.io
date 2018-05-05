@@ -26,7 +26,10 @@ router.get('/single', (req, res, next) => {
 
 // GET /books/search?q=foo
 router.get('/search', (req, res, next) => {
-  googleBooks.volumeQuery(req.query.q).then((volumes) => {
+  var queryIndex = req.originalUrl.indexOf('?');
+  var queryString = (queryIndex >= 0) ? req.originalUrl.slice(queryIndex + 1) : '';
+
+  googleBooks.volumeQuery(queryString).then((volumes) => {
     const userId = req.user.cid;
     User.findById(userId, (err, user) => {
       if (err) {

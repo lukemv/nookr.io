@@ -9,9 +9,9 @@ const redisOptions = {
 const redisClient = require('../services/redisClient')(redisOptions);
 
 module.exports = {
-  volumeQuery: (query) => {
+  volumeQuery: (queryString) => {
     return new Promise((resolve, reject) => {
-      redisClient.get(`queries:volumes:${query}`, (err, cacheHit) => {
+      redisClient.get(`queries:volumes:${queryString}`, (err, cacheHit) => {
         if (err) {
           console.error('Redis cache error occured');
           console.error(err);
@@ -21,10 +21,10 @@ module.exports = {
           return resolve(JSON.parse(cacheHit));
         }
         console.log('Cache miss!');
-        const url = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
+        const url = `https://www.googleapis.com/books/v1/volumes?${queryString}`;
         axios.get(url).then((res) => {
           // Cache query for fast duplicate search results.
-          redisClient.set(`queries:volumes:${query}`,
+          redisClient.set(`queries:volumes:${queryString}`,
             JSON.stringify(res.data), 'EX', 500);
 
           return resolve(res.data);

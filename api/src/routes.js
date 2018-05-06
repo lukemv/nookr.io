@@ -131,6 +131,23 @@ module.exports = function(app, passport, session) {
     });
   });
 
+  app.get('/userBookList', (req, res, next) => {
+    const userID = req.user.cid;
+    var bookList = [];
+    User.findById(userID, (err, user) => {
+      try{
+          for (var i = 0; i < user.books.length; i++) {
+            // Add all books to bookList array
+            bookList.push(user.books[i]);
+          }
+        }
+        catch(err) {
+          console.log(err);
+      }
+      // Return bookList
+      res.status(200).send(payload('book', {bookList}));
+    });
+  });
 
   app.get('/googleVolumeSearch', (req, res, next) => {
     const q = req.query.q;

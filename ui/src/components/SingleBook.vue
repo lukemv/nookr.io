@@ -8,7 +8,7 @@
       <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
       <div class="book-categories" v-for="category in book.volumeInfo.categories">{{category}}</div>
       <div v-if="" class="book-rating row">
-          <div class="col-6" >
+          <div v-if="hasAuth" class="col-6" >
             <div class='rating-message'>{{ratingMessage}}</div>
             <div class="stars">
               <span v-for="i in goldStars">
@@ -19,7 +19,7 @@
             </span>
             </div>
           </div>
-          
+
           <!-- <div v-else class="user-rating col-6">
             <router-link :to="{ name: 'Login' }">Login</router-link> or
             <router-link :to="{ name: 'Register' }">Register</router-link> to Rate a Book</div> -->
@@ -60,19 +60,21 @@
           })
       },
       getUserRating: function () {
-        this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
-          .then((res) => {
-            // Get the rating back from the database and set it to view
-            this.goldStars = res.body.payload.bookRating
-            this.greyStars = 5 - res.body.payload.bookRating
+        if (this.$globals.user !== null) {
+          this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
+            .then((res) => {
+              // Get the rating back from the database and set it to view
+              this.goldStars = res.body.payload.bookRating
+              this.greyStars = 5 - res.body.payload.bookRating
 
-            // Set the rating description to match the rating
-            if (this.goldStars > 0) {
-              this.ratingMessage = 'Your Current Rating'
-            }
-          }, (error) => {
-            console.log(error)
-          })
+              // Set the rating description to match the rating
+              if (this.goldStars > 0) {
+                this.ratingMessage = 'Your Current Rating'
+              }
+            }, (error) => {
+              console.log(error)
+            })
+        }
       },
       rateBook: function (rating) {
         this.$http.get(`${this.$globals.api}/addRating?bookID=` + this.bookID + `&rating=` + rating)
@@ -166,7 +168,7 @@
     margin-right: 10px;
     margin-top: 8px;
   }
- 
+
   .description{
     margin-top: 30px;
   }

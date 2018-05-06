@@ -60,19 +60,21 @@
           })
       },
       getUserRating: function () {
-        this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
-          .then((res) => {
-            // Get the rating back from the database and set it to view
-            this.goldStars = res.body.payload.bookRating
-            this.greyStars = 5 - res.body.payload.bookRating
+        if (this.$globals.user !== null) {
+          this.$http.get(`${this.$globals.api}/getRating?bookID=` + this.bookID)
+            .then((res) => {
+              // Get the rating back from the database and set it to view
+              this.goldStars = res.body.payload.bookRating
+              this.greyStars = 5 - res.body.payload.bookRating
 
-            // Set the rating description to match the rating
-            if (this.goldStars > 0) {
-              this.ratingMessage = 'Your Current Rating'
-            }
-          }, (error) => {
-            console.log(error)
-          })
+              // Set the rating description to match the rating
+              if (this.goldStars > 0) {
+                this.ratingMessage = 'Your Current Rating'
+              }
+            }, (error) => {
+              console.log(error)
+            })
+        }
       },
       rateBook: function (rating) {
         this.$http.get(`${this.$globals.api}/addRating?bookID=` + this.bookID + `&rating=` + rating)

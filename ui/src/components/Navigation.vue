@@ -3,7 +3,7 @@
     <span class="navbar-brand mb-0 h1">nookr.io</span>
     <span class="navbar-text">
       <ul class="nav">
-        <li v-if="hasAuth" class="ml-1 pl-2">
+        <li v-bind:class="{ 'pt-2': !hasAuth }" class="ml-1 pl-2">
           <router-link :to="{ name: 'SearchBooks' }">Search</router-link>
         </li>
         <li v-if="hasAuth" class="ml-1 pl-2">

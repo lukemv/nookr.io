@@ -1,5 +1,6 @@
 <template>
   <div class="book-list">
+    <book-shelf v-bind:books="userBookList" v-bind:shelf-title="'My Books'"></book-shelf>
     <book-shelf v-bind:books="recommended" v-bind:shelf-title="'Recommended'"></book-shelf>
     <book-shelf v-bind:books="trending" v-bind:shelf-title="'Trending'"></book-shelf>
     <book-shelf v-bind:books="bestSellers" v-bind:shelf-title="'New York Best Sellers'"></book-shelf>
@@ -17,6 +18,7 @@
           // Recommended, Trending, and bestsellers are all bookshelves, they need to be populated with books in the following format:
           //    bookshelf.push({title: book.title, coverImage: book.coverImage, bookID: bookID})
           //  Each bookshelf takes at least 1 book, handles long lists automatically by provided a 'load more' button
+          userBookList: [],
           recommended: [],
           trending: [],
           bestSellers: [],
@@ -50,9 +52,25 @@
         getTrendingBooks: function (response) {
           this.trendingBooks = (response)
           return response
+        },
+        // Get all books that have been ranked by a user
+        getUserBooks: function () {
+          this.$http.get(`${this.$globals.api}/userBookList`)
+            .then((response) => {
+              var bookList = response.body.payload.bookList
+              // Loop through book results and add them to the user book list bookshelf using the getBook method
+              for (var i = 0; i < bookList.length; i++) {
+                this.getBook(this.userBookList, bookList[i].bookID)
+              }
+            }, (error) => {
+              this.loading = false
+              console.log(error)
+            })
         }
       },
       created: function () {
+        // Get User Book List when created
+        this.getUserBooks()
         // Hard coded Recommended list.
         this.getBook(this.recommended, 'vWCqCVvluioC')
         this.getBook(this.recommended, 'ttuJAgAAQBAJ')

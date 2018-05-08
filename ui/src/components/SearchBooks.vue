@@ -54,6 +54,7 @@
                     <!-- Fix the infinite loop when no image is returned by the API - https://vuejs.org/v2/guide/conditional.html -->
                     <img v-if="book.volumeInfo.imageLinks" class="book-image"
                          v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
+                    <img v-else class="book-image" src="../assets/logo.png" alt="book thumbnail">
                     <!--CAPTION-->
                     <div class="caption">
                       <div class="book-title">{{book.volumeInfo.title}}</div>

@@ -32,11 +32,10 @@
     <!-- Error Messages -->
     <div class="col-md-8 col-lg-6 mx-auto">
       <div v-if="errors.length" class="alert alert-warning" role="alert">
-        <p>
-          <b>It looks like something has gone wrong:</b>
-        <ul>
-          <li v-for="error in errors">{{ error }}</li>
-        </ul>
+        <p><b>It looks like something has gone wrong:</b>
+          <ul>
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
         </p>
       </div>
     </div>
@@ -52,7 +51,9 @@
                 <router-link :to="{ path: 'book', query: { id: book.id }}">
                   <!--THUMBNAIL-->
                   <div class="thumbnail">
-                    <img class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
+                    <!-- Fix the infinite loop when no image is returned by the API - https://vuejs.org/v2/guide/conditional.html -->
+                    <img v-if="book.volumeInfo.imageLinks" class="book-image"
+                         v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
                     <!--CAPTION-->
                     <div class="caption">
                       <div class="book-title">{{book.volumeInfo.title}}</div>

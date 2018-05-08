@@ -1,7 +1,8 @@
 <template>
   <div id="book-page" class="row">
     <div class="book-image col-xs-12 col-sm-3">
-      <img v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
+      <!-- Fix the infinite loop when no image is returned by the API. -->
+      <img v-if="book.volumeInfo.imageLinks" class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
     </div>
     <div class="col-xs-12 col-sm-9">
       <div class="book-title">{{book.volumeInfo.title}}</div>

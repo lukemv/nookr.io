@@ -45,8 +45,11 @@ router.get('/single', (req, res, next) => {
 
 // GET /books/search?q=foo
 router.get('/search', (req, res, next) => {
+  log.info('Search - OriginalUrl: ', req.originalUrl);
   var queryIndex = req.originalUrl.indexOf('?');
+  log.info('Search - Index of ?: ', queryIndex);
   var queryString = (queryIndex >= 0) ? req.originalUrl.slice(queryIndex + 1) : '';
+  log.info('Search - queryStringof ?: ', queryString);
 
   googleBooks.volumeQuery(queryString).then((volumes) => {
     const userId = req.user.cid;

@@ -3,11 +3,11 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import p404 from '@/components/p404'
 import Register from '@/components/Register'
-import BookList from '@/components/BookList/BookList'
 import Proto from '@/components/Proto'
 import SearchBooks from '@/components/SearchBooks'
+import BrowseBooks from '@/components/BrowseBooks'
 import NYBooks from '@/components/NYBooks'
-import SingleBook from '@/components/SingleBook'
+import BookDetail from '@/components/BookDetail'
 import SessionEnd from '@/components/SessionEnd'
 
 Vue.use(Router)
@@ -20,11 +20,6 @@ export default new Router({
       path: '/',
       name: 'Login',
       component: Login
-    },
-    {
-      path: '/book-list',
-      name: 'BookList',
-      component: BookList
     },
     { path: '*',
       name: 'p404',
@@ -46,14 +41,19 @@ export default new Router({
       component: SearchBooks
     },
     {
+      path: '/browse',
+      name: 'BrowseBooks',
+      component: BrowseBooks
+    },
+    {
       path: '/NYBooks',
       name: 'NYBooks',
       component: NYBooks
     },
     {
-      path: '/book',
-      name: 'SingleBook',
-      component: SingleBook
+      path: '/book-detail',
+      name: 'BookDetail',
+      component: BookDetail
     },
     {
       path: '/session-end',

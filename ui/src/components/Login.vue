@@ -112,12 +112,12 @@ export default {
   },
   methods: {
     redirect: function () {
-      this.$router.push('/book-list')
+      this.$router.push('/browse')
     },
     submit: function (event) {
       this.isLoading = true
       this.errorMessage = this.successMessage = ''
-      this.$http.post(`${this.$globals.api}/login`, {email: this.email, password: this.password}).then(function (res) {
+      this.$http.post(`${this.$globals.api}/auth/login`, {email: this.email, password: this.password}).then(function (res) {
         if (res.body.messageType === 'loginSuccess') {
           this.successMessage = res.body.payload.message
           this.$globals.startSession(res.body.payload)

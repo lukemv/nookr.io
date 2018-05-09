@@ -32,10 +32,10 @@ const globals = new Vue({
   },
   methods: {
     updateProfile: function () {
-      this.$http.get(`${this.$globals.api}/profile`).then(function (data) {
+      this.$http.get(`${this.$globals.api}/auth/profile`).then(function (data) {
         this.user = data.body.payload.user
       }, function (error) {
-        console.log(error)
+        console.error(error)
       })
     },
     startSession: function (payload) {
@@ -48,7 +48,7 @@ const globals = new Vue({
       this.updateProfile()
     },
     endSession: function () {
-      this.$http.get(`${this.$globals.api}/logoff`).then(function (data) {
+      this.$http.get(`${this.$globals.api}/auth/logoff`).then(function (data) {
         this.user = null
         this.$cookie.set(this.tokenExpiresCookieKey, null)
         this.$cookie.set(this.tokenCookieKey, null)
@@ -77,12 +77,11 @@ Vue.http.interceptors.push(function (request) {
 Vue.http.interceptors.push(function (request, next) {
   next(function (response) {
     if (response.status === 401) {
+      console.log('Global Intercept [401] Ending session')
       this.$router.push('/session-end')
     }
   })
 })
-
-console.log(`API: ${Vue.prototype.$baseUrl}`)
 
 /* eslint-disable no-new */
 new Vue({

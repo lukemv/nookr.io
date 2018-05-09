@@ -3,17 +3,17 @@
 var mongoose = require('mongoose');
 const express = require('express');
 const passport = require('passport');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-
-const payload = require('./payload');
+const cookieParser = require('cookie-parser');
+const log = require('./services/logger');
 
 const host = '0.0.0.0';
 const env = process.env.Environment || '';
-const port = (env == 'prod' ||  env == 'uat' || env == 'docker') ? 80 : 8081;
-const mongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
-const redisHost = process.env.RedisHost || 'localhost';
-const redisPort = process.env.RedisPort || 6379;
+const port = (env === 'prod' || env === 'uat' || env === 'docker') ? 80 : 8081;
+
+process.env.MongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
+process.env.RedisHost = process.env.RedisHost || 'localhost';
+process.env.RedisPort = process.env.RedisPort || 6379;
 
 const app = express();
 
@@ -21,34 +21,49 @@ app.use(passport.initialize());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-mongoose.connect(mongoUrl);
+mongoose.connect(process.env.MongoUrl);
 
 const redisOptions = {
-  host: redisHost,
-  port: redisPort
+  host: process.env.RedisHost,
+  port: process.env.RedisPort
 };
 
-const session = require('./session')(redisOptions);
-require('./passport')(passport, session);
+// Use this single instance redis client where possible
+const redisClient = require('./services/redisClient')(redisOptions);
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
+const session = require('./services/session')(redisClient);
+require('./services/passport')(passport, session);
 
-require('./routes.js')(app, passport, session);
+// Start Middleware (Called First)
+const tokenHandler = require('./middleware/token');
+const authWhitelist = {
+  path: [
+    '/health',
+    '/auth/register',
+    '/auth/login'
+  ]
+};
+app.use(tokenHandler(session).unless(authWhitelist));
 
-// Handle unauthorized requests here.
-// It's important that method's with
-// 4 arguments come after the others.
-// This is what identifies them as error handlers
-app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).send(payload('unauthorized'));
-  }
-});
+const corsHandler = require('./middleware/cors');
+app.use(corsHandler);
+// End Middleware (Called First)
+
+// Begin Routes (Called Second)
+const healthRouter = require('./routes/health');
+const authRouter = require('./routes/auth');
+const booksRouter = require('./routes/books');
+const ratingRouter = require('./routes/rating');
+app.use('/books', booksRouter);
+app.use('/health', healthRouter);
+app.use('/auth', authRouter(passport, session));
+app.use('/rating', ratingRouter);
+// End Routes (Called Second)
+
+// Start Middleware (Called Last)
+const errorHandler = require('./middleware/errors');
+app.use(errorHandler);
+// End Middleware (Called Last)
 
 app.listen(port, host);
-
-console.log(`Running on http://${host}:${port}`);
+log.info(`Running on http://${host}:${port}`);

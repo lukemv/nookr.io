@@ -15,6 +15,10 @@ process.env.MongoUrl = process.env.MongoUrl || 'mongodb://localhost/nookr';
 process.env.RedisHost = process.env.RedisHost || 'localhost';
 process.env.RedisPort = process.env.RedisPort || 6379;
 
+log.info(`RedisHost: ${process.env.RedisHost}`);
+log.info(`RedisPort: ${process.env.RedisPort}`);
+log.info(`MongoUrl: ${process.env.MongoUrl}`);
+
 const app = express();
 
 app.use(passport.initialize());

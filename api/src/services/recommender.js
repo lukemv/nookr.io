@@ -1,13 +1,14 @@
 // Recomendation wrapper.
-const raccoon = require('raccoon');
 const log = require('./logger');
 
 // Set raccoon environment variables
 process.env.RACCOON_REDIS_URL = process.env.RedisHost;
 process.env.RACCOON_REDIS_PORT = process.env.RedisPort;
-raccoon.config.nearestNeighbors = 3;
+
+const raccoon = require('raccoon');
+raccoon.config.nearestNeighbors = 4;
 raccoon.config.className = 'books';
-raccoon.config.numOfRecsStore = 5;
+raccoon.config.numOfRecsStore = 20;
 
 module.exports = {
   liked: (user, item) => {

@@ -24,6 +24,6 @@ module.exports = {
     return raccoon.bestRated();
   },
   recommendFor: (user, nRecs) => {
-    return raccoon.reccommendFor(user, nRecs);
+    return raccoon.recommendFor(user, nRecs);
   }
 };

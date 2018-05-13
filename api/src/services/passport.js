@@ -77,7 +77,7 @@ module.exports = (passport, session) => {
 
       if (!user.validPassword(password)) {
         return done(null, false, payload('loginFailed', {
-          message: `Login Failed: invalid password`
+          message: 'Login Failed: invalid password'
         }));
       }
 
@@ -93,7 +93,7 @@ module.exports = (passport, session) => {
       };
 
       return done(null, user, payload('loginSuccess', {
-        message: `Login Success!`,
+        message: 'Login Success!',
         token: tExp.token,
         expires: tExp.expires,
         user: userModel

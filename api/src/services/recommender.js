@@ -20,7 +20,7 @@ module.exports = {
     return raccoon.disliked(user, item);
   },
   bestRated: () => {
-    log.info(`Fetching best rated items`, 'raccoon');
+    log.info('Fetching best rated items', 'raccoon');
     return raccoon.bestRated();
   },
   recommendFor: (user, nRecs) => {

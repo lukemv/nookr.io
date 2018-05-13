@@ -15,6 +15,11 @@
           <div class="book-title">{{book.volumeInfo.title}}</div>
         </router-link>
         <div class="mb-3">
+          <button
+            type="submit"
+            class="btn btn-block btn-primary"
+            v-on:click="add(book)"
+            >Add to DB </button>
           <div class="book-authors" v-for="author in book.volumeInfo.authors">{{author}}</div>
           <div v-if="book.volumeInfo.industryIdentifiers">
             <div v-if="book.volumeInfo.industryIdentifiers.length > 0">
@@ -41,6 +46,19 @@
   export default {
     name: 'book-simple',
     props: ['book'],
-    components: {BookRating}
+    components: {BookRating},
+    methods: {
+      add: function (book) {
+        console.log(`adding ${book.id} to database`)
+        this.$http.post(`${this.$globals.api}/add`, {
+          bookX: book
+        }).then((res) => {
+        }, (error) => {
+          // Todo: Be more pro-active here
+          console.log(error)
+        })
+      }
+
+    }
   }
 </script>

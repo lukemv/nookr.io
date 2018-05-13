@@ -58,10 +58,12 @@ const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
 const booksRouter = require('./routes/books');
 const ratingRouter = require('./routes/rating');
+const addRouter = require('./routes/add');
 app.use('/books', booksRouter);
 app.use('/health', healthRouter);
 app.use('/auth', authRouter(passport, session));
 app.use('/rating', ratingRouter);
+app.use('/add', addRouter);
 // End Routes (Called Second)
 
 // Start Middleware (Called Last)

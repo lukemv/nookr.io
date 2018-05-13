@@ -3,6 +3,13 @@
     <div class="mt-3">
       <a href="" @click="$router.go(-1)">Back to Search Results</a>
       <pre> ^^ This does not work, please use the browser back button ¯\_(ツ)_/¯</pre>
+    <div class="col-md-6">
+          <button
+            type="submit"
+            class="btn btn-block btn-primary"
+            v-on:click.prevent="submit"
+            >Add to Database</button>
+        </div>
     </div>
     <header>
       <h2>{{book.volumeInfo.title}}</h2>

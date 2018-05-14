@@ -1,9 +1,11 @@
 <template>
   <div class="book-text">
     <div class="thumbnail book-thumb">
-      <div v-if="book.volumeInfo.imageLinks">
-        <img class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
-      </div>
+      <router-link :to="{ path: 'book-detail', query: { id: book.id }}">
+        <div v-if="book.volumeInfo.imageLinks">
+          <img class="book-image" v-bind:src="book.volumeInfo.imageLinks.thumbnail" alt="book thumbnail">
+        </div>
+      </router-link>
       <div v-if="!book.volumeInfo.imageLinks">
         <div class="book-image placeholder-img text-center">
           <p>Image Not available</p>

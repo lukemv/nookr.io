@@ -51,14 +51,8 @@
           </div>
         </div>
       </div>
-      <div class="page-controls-wrapper">
-        <div class="page-controls text-center pagination-centered">
-          <button v-if="!startIndex == 0" @click="loadPrevious()">Previous Page</button>
-          <button @click="loadNext()">Next Page</button>
-          </div>
-      </div>
     </main>
-  </div>  
+  </div>
 </template>
 
 <script>
@@ -127,14 +121,6 @@
           this.isLoading = false
           this.errors.push('The search timed out. Please try again')
         }
-      },
-      loadNext: function () {
-        this.startIndex += this.maxResults
-        this.searchFromInput()
-      },
-      loadPrevious: function () {
-        this.startIndex -= this.maxResults
-        this.searchFromInput()
       }
     },
     mounted: function () {
@@ -213,12 +199,5 @@
   .stars {
     margin-bottom: 3px;
     margin-top: 3px;
-  }
-  .page-controls{
-    margin-bottom: 70px;
-  }
-  .page-controls button{
-    padding: 5px;
-    margin: 20px;
   }
 </style>

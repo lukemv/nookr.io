@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/user');
 const recommender = require('../services/recommender');
 const log = require('../services/logger');
+const raccoon = require('raccoon');
 
 const payload = require('../models/payload');
 
@@ -47,14 +48,17 @@ router.post('/', (req, res, next) => {
 
       // This is soo dodgy..
       if (ratingNumber >= 3) {
-        recommender.liked(userID, bookID).then(() => {
+        raccoon.liked(userID, bookID).then(() => {
           return res.status(200).send(payload('rating', {'bookRating': ratingNumber}));
         });
       } else {
-        recommender.disliked(userID, bookID).then(() => {
+        raccoon.disliked(userID, bookID).then(() => {
           return res.status(200).send(payload('rating', {'bookRating': ratingNumber}));
         });
       }
+      raccoon.recommendFor(userID, 10).then((results) => {
+        console.log(results);
+      });
     });
   });
 });

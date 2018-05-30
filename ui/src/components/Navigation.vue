@@ -1,8 +1,6 @@
 <template>
   <nav class="navbar navbar-dark bg-primary">
-    <router-link :to="{ name: 'BrowseBooks' }">
-      <span class="navbar-brand mb-0 h1">nookr.io</span>
-    </router-link>
+    <span class="navbar-brand mb-0 h1">nookr.io</span>
     <span class="navbar-text">
       <ul class="nav">
         <li v-if="hasAuth" class="ml-1 pl-2">

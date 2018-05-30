@@ -1,8 +1,6 @@
 <template>
   <div class="search-wrapper">
     <div class="row mx-auto">
-      <!-- Padding column -->
-      <div class="col-md-3"></div>
       <div class="col-md-6 col-lg-6 col-sm-12 mb-4">
         <h4>nookr search <small class="poweredby">Powered by Google Books</small>
           <icon v-if="isLoading" class="fa-spin" name="sync"></icon>

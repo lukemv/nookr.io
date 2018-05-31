@@ -6,7 +6,7 @@
           <icon v-if="isLoading" class="fa-spin" name="sync"></icon>
         </h4>
         <button v-on:click="setContext('bestRated')" class="btn btn-success">Best Rated</button>
-        <button v-on:click="setContext('recommendedFor')" class="btn btn-info" disabled>Recommended (Coming Soon)</button>
+        <button v-on:click="setContext('recommendFor')" class="btn btn-info">Recommended</button>
       </div>
     </div>
     <main id="browse-list" class="mx-auto">
@@ -45,7 +45,7 @@
       }
     },
     mounted: function () {
-      this.setContext('bestRated')
+      this.setContext('recommendFor')
     }
   }
 </script>
